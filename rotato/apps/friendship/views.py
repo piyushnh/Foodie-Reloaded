@@ -9,24 +9,30 @@ except ImportError:
 
 from django.shortcuts import render, get_object_or_404, redirect
 
+#rest_framework imports
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .exceptions import AlreadyExistsError
 from .models import Friend, Follow, FriendshipRequest
+from .serializers import (FriendshipRequestSerializer, FriendSerializer,
+                            FollowSerializer, UserSerializer)
 
 get_friendship_context_object_name = lambda: getattr(settings, 'FRIENDSHIP_CONTEXT_OBJECT_NAME', 'user')
 get_friendship_context_object_list_name = lambda: getattr(settings, 'FRIENDSHIP_CONTEXT_OBJECT_LIST_NAME', 'users')
 
-
-def view_friends(request, username, template_name='friendship/friend/user_list.html'):
+@login_required
+@api_view(['GET'])
+def view_friends(request, username):
     """ View the friends of a user """
     user = get_object_or_404(user_model, username=username)
     friends = Friend.objects.friends(user)
-    return render(request, template_name, {
-        get_friendship_context_object_name(): user,
-        'friendship_context_object_name': get_friendship_context_object_name()
-    })
+    serializer = FriendSerializer(friends, many = True)
+    return Response(serializer.data)
 
 
 @login_required
+@api_view(['POST'])
 def friendship_add_friend(request, to_username, template_name='friendship/friend/add.html'):
     """ Create a FriendshipRequest """
     ctx = {'to_username': to_username}
@@ -37,14 +43,13 @@ def friendship_add_friend(request, to_username, template_name='friendship/friend
         try:
             Friend.objects.add_friend(from_user, to_user)
         except AlreadyExistsError as e:
-            ctx['errors'] = ["%s" % e]
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            return redirect('friendship:friendship_request_list')
-
-    return render(request, template_name, ctx)
+            return Response(status=status.HTTP_201_CREATED)
 
 
 @login_required
+@api_view(['POST'])
 def friendship_accept(request, friendship_request_id):
     """ Accept a friendship request """
     if request.method == 'POST':
@@ -54,11 +59,12 @@ def friendship_accept(request, friendship_request_id):
         f_request.accept()
         # return redirect('friendship:friendship_view_friends', username=request.user.username)
 
-    return redirect('friendship:friendship_request_list')
+    return Response(status=status.HTTP_202_ACCEPTED)
 
 
 
 @login_required
+@api_view(['POST'])
 def friendship_reject(request, friendship_request_id):
     """ Reject a friendship request """
     if request.method == 'POST':
@@ -69,10 +75,11 @@ def friendship_reject(request, friendship_request_id):
         # return redirect('friendship:friendship_request_list')
 
     # return redirect('friendship:friendship_requests_detail', friendship_request_id=friendship_request_id)
-    return redirect('friendship:friendship_request_list')
+    return Response(status=status.HTTP_200_OK)
 
 
 @login_required
+@api_view(['POST'])
 def friendship_cancel(request, friendship_request_id):
     """ Cancel a previously created friendship_request_id """
     if request.method == 'POST':
@@ -80,26 +87,30 @@ def friendship_cancel(request, friendship_request_id):
             request.user.friendship_requests_sent,
             id=friendship_request_id)
         f_request.cancel()
-        return redirect('friendship:friendship_request_list')
 
-    return redirect('friendship:friendship_requests_detail', friendship_request_id=friendship_request_id)
+
+    return Response(status=status.HTTP_200_OK)
 
 
 @login_required
-def friendship_request_list(request, template_name='friendship/friend/requests_list.html'):
+@api_view(['GET'])
+def friendship_request_list(request):
     """ View unread and read friendship requests """
     # friendship_requests = Friend.objects.requests(request.user)
     friendship_requests = FriendshipRequest.objects.filter(rejected__isnull=True,to_user=request.user)
+    serializer = FriendshipRequestSerializer(friendship_requests, many=True)
 
-    return render(request, template_name, {'requests': friendship_requests})
+    return Response(serializer.data)
 
 @login_required
-def friendship_requests_sent_list(request, template_name='friendship/friend/requests_sent_list.html'):
+@api_view(['GET'])
+def friendship_requests_sent_list(request):
     """ View unread and read friendship requests """
     # friendship_requests = Friend.objects.requests(request.user)
     friendship_requests = FriendshipRequest.objects.filter(from_user=request.user)
+    serializer = FriendshipRequestSerializer(friendship_requests, many=True)
 
-    return render(request, template_name, {'requests': friendship_requests})
+    return Response(serializer.data)
 
 
 @login_required
@@ -112,11 +123,14 @@ def friendship_request_list_rejected(request, template_name='friendship/friend/r
 
 
 @login_required
+@api_view(['GET'])
 def friendship_requests_detail(request, friendship_request_id, template_name='friendship/friend/request.html'):
     """ View a particular friendship request """
     f_request = get_object_or_404(FriendshipRequest, id=friendship_request_id)
+    serializer = FriendshipRequestSerializer(f_request)
 
-    return render(request, template_name, {'friendship_request': f_request})
+
+    return Response(serializer.data)
 
 @login_required
 def remove_friend(request, friend_username):
@@ -178,8 +192,10 @@ def follower_remove(request, followee_username, template_name='friendship/follow
 
     return render(request, template_name, {'followee_username': followee_username})
 
-
-def all_users(request, template_name="friendship/user_actions.html"):
+@login_required
+@api_view(['GET'])
+def all_users(request):
     users = user_model.objects.all()
+    serializer = UserSerializer(users, many=True)
 
-    return render(request, template_name, {get_friendship_context_object_list_name(): users})
+    return Response(serializer.data)
