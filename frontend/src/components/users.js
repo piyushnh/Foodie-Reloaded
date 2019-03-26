@@ -35,7 +35,7 @@ class Users extends React.Component {
   refreshList = () => {
     axios
       .get("http://localhost:8000/friendship/users/")
-      .then(res => console.log(res.data) )
+      .then(res => this.setState({ users: res.data }) )
       .catch(err => console.log(err));
   };
 
