@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from apps.custom_account.settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,8 +26,9 @@ SECRET_KEY = '9oxiw%z+j)!kk(1i-8g*80cd6(50t3v2^v@1i-y)6h#@9o9#ro'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+CORS_ORIGIN_ALLOW_ALL=True
 
 # Application definition
 
@@ -39,15 +39,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'debug_toolbar',
-    'django.contrib.sites',
     'corsheaders',
     'rest_framework',
 
-    'apps.custom_account',
+    #authentication papckages
+    'rest_framework.authtoken',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'rest_auth.registration',
+
+
     'apps.friendship',
-]  + ALLAUTH_INSTALLED_APPS
+]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -74,10 +82,31 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
 WSGI_APPLICATION = 'rotato.wsgi.application'
 
@@ -134,10 +163,25 @@ STATIC_URL = '/static/'
 #necessary for django debug toolbar
 INTERNAL_IPS = ['127.0.0.1']
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
 # we whitelist localhost:3000 because that's where frontend will be served
-CORS_ORIGIN_WHITELIST = (
-         'localhost:3000/'
- )
+# CORS_ORIGIN_WHITELIST = (
+#          'localhost:3000/',
+#          'http://127.0.0.1:3000'
+#  )
+
+#authentication related
+SITE_ID = 1
+
+# LOGIN_REDIRECT_URL = 'http://localhost:3000/'
+# LOGOUT_REDIRECT_URL = '/'
+
+# Custom allauth settings
+# Use email as the primary identifier
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+
+
+
+# Eliminate need to provide username, as it's a very old practice
+ACCOUNT_USERNAME_REQUIRED = False
+OLD_PASSWORD_FIELD_ENABLED = True

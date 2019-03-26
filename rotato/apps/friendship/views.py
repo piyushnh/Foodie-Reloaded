@@ -192,10 +192,12 @@ def follower_remove(request, followee_username, template_name='friendship/follow
 
     return render(request, template_name, {'followee_username': followee_username})
 
-@login_required
+
+# @login_required
 @api_view(['GET'])
 def all_users(request):
     users = user_model.objects.all()
     serializer = UserSerializer(users, many=True)
 
+    # print(serializer)
     return Response(serializer.data)
