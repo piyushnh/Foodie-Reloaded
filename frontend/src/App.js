@@ -1,23 +1,44 @@
 import React, { Component } from 'react';
-import './App.css';
 import Navbar from './containers/Navbar';
-import { Route, Switch  } from 'react-router-dom'
-import Users from './components/users' ;
-import Contact from './components/contact' ;
+import { BrowserRouter as Router } from 'react-router-dom';
+
+// redux imports
+import { connect } from 'react-redux';
+import * as actions from './store/actions/auth';
+
+import BaseRouter from './routes';
+
 
 class App extends Component {
+
+  componentDidMount() {
+    this.props.onTryAutoSignup();
+  }
+
   render() {
     return (
-      <div className="App">
+      <Router>
+        <div>
+            <Navbar {...this.props}/>
+            <BaseRouter />
 
-        <Navbar />
-        <Switch>
-            <Route path="/users/" component={Users} />
-            <Route path="/contact/" component={Contact} />
-        </Switch>
-      </div>
+        </div>
+     </Router>
+
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.token !== null
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

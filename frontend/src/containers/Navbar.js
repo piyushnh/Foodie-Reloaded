@@ -20,7 +20,7 @@ class Navbar extends Component {
   render(){
    return(
      <MuiThemeProvider theme={theme}>
-         <PrimarySearchAppBar color="primary" />
+         <PrimarySearchAppBar color="primary" {...this.props} />
      </MuiThemeProvider>
 
    );

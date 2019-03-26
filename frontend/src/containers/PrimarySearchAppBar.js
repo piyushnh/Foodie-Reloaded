@@ -16,8 +16,13 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import Button from '@material-ui/core/Button';
 
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
+
+import { connect } from 'react-redux';
+import * as actions from '../store/actions/auth';
+
 
 const styles = theme => ({
   root: {
@@ -87,6 +92,13 @@ const styles = theme => ({
       display: 'none',
     },
   },
+  button:{
+    alignItems: 'right',
+    justifyContent: 'right',
+    backgroundColor: '#2e7d32',
+    color: '#fafafa',
+
+  },
 });
 
 class PrimarySearchAppBar extends React.Component {
@@ -127,8 +139,9 @@ class PrimarySearchAppBar extends React.Component {
         onClose={this.handleMenuClose}
       >
           <div>
-            <MenuItem onClick={this.handleMenuClose}><Link to="/users/">Users</Link></MenuItem>
-            <MenuItem onClick={this.handleMenuClose}><Link to="/contact/">Contact</Link></MenuItem>
+            <MenuItem onClick={this.handleMenuClose}><Link to="/users">Users</Link></MenuItem>
+            <MenuItem onClick={this.handleMenuClose}><Link to="/contact">Contact</Link></MenuItem>
+            <MenuItem onClick={this.props.logout}><Link to="/">Logout</Link></MenuItem>
           </div>
 
       </Menu>
@@ -177,6 +190,10 @@ class PrimarySearchAppBar extends React.Component {
             <Typography className={classes.title} variant="h6" color="inherit" noWrap>
               Material-UI
             </Typography>
+
+          {this.props.isAuthenticated ?
+
+            <>
             <div className={classes.search}>
               <div className={classes.searchIcon}>
                 <SearchIcon />
@@ -215,6 +232,16 @@ class PrimarySearchAppBar extends React.Component {
                 <MoreIcon />
               </IconButton>
             </div>
+            </>
+
+            :
+
+            <div style={{ float: 'right', marginLeft:'85%'}}>
+               <Button color="inherit" className = {classes.button} ><Link to="/login">Login</Link></Button>
+           </div>
+
+
+          }
           </Toolbar>
         </AppBar>
         {renderMenu}
@@ -229,4 +256,10 @@ PrimarySearchAppBar.propTypes = {
 };
 
 
-export default withStyles(styles)(PrimarySearchAppBar);
+const mapDispatchToProps = dispatch => {
+    return {
+        logout: () => dispatch(actions.logout())
+    }
+}
+
+export default withRouter(connect(null, mapDispatchToProps)(withStyles(styles)(PrimarySearchAppBar)));
