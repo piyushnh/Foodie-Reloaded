@@ -20,7 +20,10 @@ class App extends Component {
       <Router>
         <div>
             <Navbar {...this.props}/>
-            <BaseRouter />
+
+              <div className="container">
+                <BaseRouter />
+              </div>
 
         </div>
      </Router>

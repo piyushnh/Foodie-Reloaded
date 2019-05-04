@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.gis',
 
     'debug_toolbar',
     'corsheaders',
@@ -55,10 +56,12 @@ INSTALLED_APPS = [
 
 
     'apps.friendship',
+    'apps.restaurants',
+
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #IMPORTANT to add this above all middleware for CORS to work
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,14 +97,20 @@ AUTHENTICATION_BACKENDS = (
 
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
+
 )
 
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
+
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        #Then, we set the DEFAULT_AUTHENTICATION_CLASSES,
+        # which determines which authentication methods the server will try when
+        #it receives a request, in descending order
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -114,10 +123,22 @@ WSGI_APPLICATION = 'rotato.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'foodie',
+        'USER': 'foodieuser',
+        'PASSWORD': 'piyush1235',
+        'HOST': 'localhost',
+        'PORT': '',
+
     }
 }
 
@@ -146,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -159,15 +180,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 #necessary for django debug toolbar
 INTERNAL_IPS = ['127.0.0.1']
 
 # we whitelist localhost:3000 because that's where frontend will be served
-# CORS_ORIGIN_WHITELIST = (
-#          'localhost:3000/',
-#          'http://127.0.0.1:3000'
-#  )
+CORS_ORIGIN_WHITELIST = (
+         'http://localhost:3000/',
+         'http://127.0.0.1:3000',
+ )
+
+CORS_ALLOW_CREDENTIALS = True
 
 #authentication related
 SITE_ID = 1
@@ -185,3 +210,12 @@ ACCOUNT_EMAIL_REQUIRED = True
 # Eliminate need to provide username, as it's a very old practice
 ACCOUNT_USERNAME_REQUIRED = False
 OLD_PASSWORD_FIELD_ENABLED = True
+
+JWT_AUTH = {
+    # Authorization:Token xxx
+    'JWT_AUTH_HEADER_PREFIX': 'Token',
+}
+
+
+
+GEOIP_PATH = os.path.join(BASE_DIR, "GeoLite2-City.mmdb")

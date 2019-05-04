@@ -22,8 +22,13 @@ export const authFail = error => {
 }
 
 export const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('expirationDate');
+
+    axios.post('http://127.0.0.1:8000/rest-auth/logout/')
+    .then(res => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('expirationDate');
+      delete axios.defaults.headers.common["Authorization"];
+    })
     return {
         type: actionTypes.AUTH_LOGOUT
     };

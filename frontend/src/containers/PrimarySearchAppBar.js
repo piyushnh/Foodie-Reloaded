@@ -18,7 +18,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 
-import { Link, withRouter } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import * as actions from '../store/actions/auth';
@@ -139,9 +139,11 @@ class PrimarySearchAppBar extends React.Component {
         onClose={this.handleMenuClose}
       >
           <div>
-            <MenuItem onClick={this.handleMenuClose}><Link to="/users">Users</Link></MenuItem>
+
+            <MenuItem onClick={this.handleMenuClose}><Link to="/users/">Users</Link></MenuItem>
             <MenuItem onClick={this.handleMenuClose}><Link to="/contact">Contact</Link></MenuItem>
-            <MenuItem onClick={this.props.logout}><Link to="/">Logout</Link></MenuItem>
+            <MenuItem onClick={()=>{ this.handleMenuClose(); this.props.logout()}}><Link to="/">Logout</Link></MenuItem>
+            <MenuItem onClick={this.handleMenuClose}><Link to="/nearbyfoodcourts/">Nearby Food Courts</Link></MenuItem>
           </div>
 
       </Menu>
@@ -262,4 +264,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(withStyles(styles)(PrimarySearchAppBar)));
+export default connect(null, mapDispatchToProps)(withStyles(styles)(PrimarySearchAppBar));
