@@ -63,8 +63,8 @@ class PureFoodCourtRestaurantList extends React.Component {
 
   componentWillMount()
   {
-    var token = localStorage.getItem('token')
     const {foodcourtID} = this.props.location.state
+    var token = localStorage.getItem('token')
     axios.defaults.headers.common = {
     "Content-Type": "application/json",
     Authorization: `Token ${token}`
@@ -85,7 +85,7 @@ class PureFoodCourtRestaurantList extends React.Component {
       restaurants.map((restaurant)=>
       <>
         <br />
-         <FoodCourtRestaurantItem data={restaurant} {...this.props}/>
+         <FoodCourtRestaurantItem key={restaurant.id} data={restaurant} />
         <br />
       </>
     )
@@ -107,10 +107,7 @@ class FoodCourtListCard extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  componentDidMount()
-  {
 
-  }
 
   render() {
     const { classes } = this.props;

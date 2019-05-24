@@ -5,14 +5,20 @@ from .models import (Restaurant,
                      FoodCourt,
                      Menu,
                      MenuCategory,
-                     MenuItem
+                     MenuItem,
+                     Order,
+                     Quantity,
+                     MerchantProfile
                      )
 # from .models import Restaurant
 # # Register your models here.
 #
 admin.site.register(Menu)
+admin.site.register(Quantity)
+admin.site.register(Order)
 admin.site.register(MenuCategory)
 admin.site.register(MenuItem)
+admin.site.register(MerchantProfile)
 
 
 

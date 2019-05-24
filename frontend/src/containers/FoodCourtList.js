@@ -77,7 +77,7 @@ class FoodCourtList extends React.Component {
         restaurants.map((restaurant)=>
         <>
         <br />
-        <FoodCourtListCard data={restaurant} {...this.props}/>
+        <FoodCourtListCard key={restaurant.id} data={restaurant} />
         <br />
         </>
         )

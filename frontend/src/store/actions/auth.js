@@ -27,7 +27,7 @@ export const logout = () => {
     .then(res => {
       localStorage.removeItem('token');
       localStorage.removeItem('expirationDate');
-      delete axios.defaults.headers.common["Authorization"];
+      delete axios.defaults.headers.common.Authorization;
     })
     return {
         type: actionTypes.AUTH_LOGOUT
@@ -55,7 +55,6 @@ export const authLogin = (email, password) => {
             localStorage.setItem('token', token);
             localStorage.setItem('expirationDate', expirationDate);
             dispatch(authSuccess(token));
-            dispatch(checkAuthTimeout(3600));
         })
         .catch(err => {
             dispatch(authFail(err))
@@ -77,7 +76,6 @@ export const authSignup = (email, password1, password2) => {
             localStorage.setItem('token', token);
             localStorage.setItem('expirationDate', expirationDate);
             dispatch(authSuccess(token));
-            dispatch(checkAuthTimeout(3600));
         })
         .catch(err => {
             dispatch(authFail(err))
@@ -90,14 +88,20 @@ export const authCheckState = () => {
         const token = localStorage.getItem('token');
         if (token === undefined) {
             dispatch(logout());
-        } else {
-            const expirationDate = new Date(localStorage.getItem('expirationDate'));
-            if ( expirationDate <= new Date() ) {
-                dispatch(logout());
-            } else {
-                dispatch(authSuccess(token));
-                dispatch(checkAuthTimeout( (expirationDate.getTime() - new Date().getTime()) / 1000) );
-            }
+        }
+         else
+         {
+              dispatch(authSuccess(token));
+          }
         }
     }
-}
+
+
+// dispatch(checkAuthTimeout(3600));
+// dispatch(checkAuthTimeout(3600));
+// else {
+//     const expirationDate = new Date(localStorage.getItem('expirationDate'));
+//     if ( expirationDate <= new Date() ) {
+//         dispatch(logout());
+//     }
+// dispatch(checkAuthTimeout( (expirationDate.getTime() - new Date().getTime()) / 1000) );

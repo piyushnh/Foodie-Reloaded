@@ -10,8 +10,23 @@ from geopy.exc import GeocoderQueryError
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-User = get_user_model()
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User
 # Create your models here.
+
+class MerchantProfile(models.Model):
+    merchant = models.OneToOneField(User,on_delete=models.CASCADE,related_name='merchant', help_text='The menus that this category belongs to, i.e. \'Lunch\'.')
+    phone_number = models.CharField(max_length = 10, blank=False)
+    paytm_merchant_id = models.CharField(max_length=20, unique=True)
+    paytm_merchant_key = models.CharField(max_length=20, unique=True)
+
+
+
+    def __str__(self):
+        return str(self.merchant)
 
 class FoodCourt(models.Model):
     name = models.CharField(max_length = 100)
@@ -50,6 +65,7 @@ class FoodCourt(models.Model):
 
 class Restaurant(models.Model):
     name = models.CharField(max_length = 100)
+    merchant = models.ForeignKey(MerchantProfile, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     foodcourt = models.ForeignKey(FoodCourt, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     address = models.CharField(max_length=100, null=True)
     cover_pic = models.ImageField(upload_to = 'media/restaurant_pics',blank=False )
@@ -147,7 +163,7 @@ class MenuItem(models.Model):
 
     name = models.CharField(max_length=48, help_text='Name of the item on the menu.')
     description = models.CharField(max_length=128, null=True, blank=True, help_text='The description is a simple text description of the menu item.')
-    category = models.ManyToManyField(MenuCategory,related_name='categories', verbose_name='menu category', help_text='Category is the menu category that this menu item belongs to, i.e. \'Appetizers\'.')
+    category = models.ManyToManyField(MenuCategory,related_name='items', verbose_name='menu category', help_text='Category is the menu category that this menu item belongs to, i.e. \'Appetizers\'.')
     order = models.IntegerField(default=0, verbose_name='order', help_text='The order is to specify the order in which items show up on the menu.')
     price = models.IntegerField(help_text='The price is the cost of the item.')
     image = models.ImageField(upload_to='media/menu_item_pics', null=True, blank=True, verbose_name='image', help_text='The image is an optional field that is associated with each menu item.')
@@ -168,3 +184,20 @@ class MenuItem(models.Model):
 
     def __str__(self):
        return str(self.name)
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User,on_delete=models.CASCADE,related_name='orders',  )
+    restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE,related_name='orders',)
+    amount = models.IntegerField(default=0, verbose_name='amount', )
+    items = models.ManyToManyField(MenuItem, related_name='orders')#name orders means all the orders a dish has been a part of
+
+    def __str__(self):
+        return str(self.id)
+
+class Quantity(models.Model):
+    number = models.IntegerField(default=0)
+    order = models.ForeignKey(Order,on_delete=models.CASCADE, related_name='quantities' )
+
+    def __str__(self):
+        return str(self.number)

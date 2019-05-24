@@ -1,7 +1,13 @@
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.mixins import RetrieveModelMixin
+from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import IsAuthenticated
+from django.core import serializers
 
-from rest_framework.decorators import api_view
+
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
@@ -18,8 +24,9 @@ from django.shortcuts import render, get_object_or_404
 
 # from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .models import Restaurant, FoodCourt
-from .serializers import (RestaurantSerializer, FoodCourtSerializer)
+from .models import Restaurant, FoodCourt, Order
+from .serializers import (RestaurantSerializer, FoodCourtSerializer,
+MenuSerializer,MenuCategorySerializer, MenuItemSerializer, OrderSerializer)
 
 from django.contrib.gis import measure
 from django.contrib.gis import geos
@@ -75,6 +82,67 @@ class FoodCourtRestaurantList(ListAPIView):
         # restaurants = foodcourtserializer.data[0]["restaurants"]
 
         return restaurants
+
+class MenuItemList(ListAPIView):
+    serializer_class = MenuCategorySerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs['restaurant_id']
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+        menu = restaurant.menu.first()
+        categories = menu.categories
+        # items = categories.first().items
+
+        return categories
+
+# @login_required
+@api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
+def create_order(request, restaurant_id):
+    """
+    List all code snippets, or create a new snippet.
+    """
+
+    if request.method == 'POST':
+        data=request.data
+        amount = 0
+        restaurant = Restaurant.objects.get(id = restaurant_id)
+        # serializer = SnippetSerializer(data=request.data)
+        order = Order(customer=request.user, restaurant=restaurant)
+        order.save()
+
+
+
+        for a in data:
+            item = a['item']
+            amount += item['price'] * a['quantity']
+
+            order.items.add(item['id'])
+            order.quantities.create(number = a['quantity'])
+
+        order.amount = amount
+        order.save()
+
+
+
+        order = OrderSerializer(order)
+        # order = OrderSerializer(order, many=True)
+
+
+        # if !order:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+            # return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # content = {'please move along': 'nothing to see here'}
+        return Response(order.data,status=status.HTTP_201_CREATED)
+
+class OrderSummary(RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+
+
 
 # @api_view(['GET'])
 # def foodcourt_restaurant_list(request, foodcourt_id):
