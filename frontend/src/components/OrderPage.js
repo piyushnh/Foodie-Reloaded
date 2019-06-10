@@ -69,40 +69,19 @@ class PureOrderResponse extends React.Component {
   }
 
 
-  // handlePayment()
-  // {
-  //   const {order} = this.props.location.state;
-  //
-  //   const data = {
-  //     'MID': order.restaurant.merchant,
-  //     'ORDER_ID':order.id,
-  //     'CUST_ID':order.customer.email,
-  //     'TXN_AMOUNT':order.amount,
-  //   }
-  //
-  //   var token = localStorage.getItem('token')
-  //   axios.defaults.headers.common = {
-  //   "Content-Type": "application/json",
-  //   Authorization: `Token ${token}`
-  //   }
-  //
-  //   axios
-  //     .post(`http://127.0.0.1:8000/restaurant/paytm/payment/`, data)
-  //     .then(res => {
-  //
-  //          if (res.status === 201) {
-  //            console.log("success");
-  //          }
-  //        })
-  //     .catch(err => console.log(err));
-  // }
-
   handlePaymentRetry()
   {
-    // var currentRoutes = this.context.router.getCurrentRoutes();
-    // var routeName = currentRoutes[currentRoutes.length - 2].name;
-    // console.log(routeName);
-    this.props.history.goBack()
+
+    let data = JSON.parse(localStorage.getItem('orderData'));
+    let restaurantName = data["restaurant"]["name"];
+    console.log(restaurantName);
+    this.props.history.push({
+      pathname:'/foodcourts/'+restaurantName+'/order/',
+      state:{order:data}
+    });
+
+
+    // this.props.history.goBack()
     // this.props.history.go(-3);
   }
 
@@ -243,6 +222,10 @@ class OrderSummary extends React.Component {
   componentDidMount()
   {
     const {order} = this.props.location.state;
+
+    console.log(order);
+    // storing the order item in browser cache
+    localStorage.setItem('orderData',JSON.stringify(order));
 
     const data = {
       'MID': order.restaurant.merchant,
