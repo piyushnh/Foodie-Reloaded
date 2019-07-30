@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         width: '100%',
-        position: 'fixed',
+        position: 'relative',
         bottom: 0,
         marginTop:'1px',
       },

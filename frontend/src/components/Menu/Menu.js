@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import MenuGridItem from './MenuItem';
 import Paper from '@material-ui/core/Paper';
 import LoadingSpinner from '../Utility/LoadingSpinner';
+import Typography from '@material-ui/core/Typography';
 
 
   
@@ -158,7 +159,7 @@ import LoadingSpinner from '../Utility/LoadingSpinner';
       else
       {
           menu =  <>
-          <div className={classes.root}>
+          <div className="container">
           <GridList cellHeight={500} style={{margin: '1em 0 0 0'}} className={classes.gridList}>
   
           {
@@ -187,7 +188,8 @@ import LoadingSpinner from '../Utility/LoadingSpinner';
           </div>
   
           <Button variant="contained" color="primary" onClick={this.onOrderPlacement} className={classes.orderButton}>
-            Place Order
+            <p>{orderList.length + 'items' }</p>
+          Place Order
           </Button>
           </> ;
           
@@ -195,7 +197,7 @@ import LoadingSpinner from '../Utility/LoadingSpinner';
 
   
       return (
-        <Paper>
+        <Paper className={classes.root}>
             {menu}
         </Paper>
         )
