@@ -16,11 +16,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Paper from '@material-ui/core/Paper';
 
-import FoodCourtRestaurantItem from './FoodCourtRestaurantItem' ;
 
-import axios from "axios";
 import { Link } from 'react-router-dom';
 
 
@@ -52,55 +49,7 @@ const styles = theme => ({
 });
 
 
-class PureFoodCourtRestaurantList extends React.Component {
-
-  constructor(props) {
-  super(props);
-  this.state = {
-    restaurants: []
-  };
- }
-
-  componentWillMount()
-  {
-    const {foodcourtID} = this.props.location.state
-    var token = localStorage.getItem('token')
-    axios.defaults.headers.common = {
-    "Content-Type": "application/json",
-    Authorization: `Token ${token}`
-    }
-
-    axios
-      .get(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/${foodcourtID}`)
-      .then(res => this.setState({ restaurants: res.data }) )
-      .catch(err => console.log(err));
-  }
-
-  render()
-  {
-    const restaurants = this.state.restaurants;
-    const { classes } = this.props;
-
-    return(
-      restaurants.map((restaurant)=>
-      <>
-        <br />
-         <FoodCourtRestaurantItem key={restaurant.id} data={restaurant} />
-        <br />
-      </>
-    )
-  )
-  }
-}
-
-const FoodCourtRestaurantList = withStyles(styles)(PureFoodCourtRestaurantList);
-
-export {FoodCourtRestaurantList};
-
-// module.exports = withStyles(styles)(FoodCourtRestaurantList);
-
-
-class FoodCourtListCard extends React.Component {
+class FoodCourtCard extends React.Component {
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -197,8 +146,8 @@ class FoodCourtListCard extends React.Component {
   }
 }
 
-FoodCourtListCard.propTypes = {
+FoodCourtCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(FoodCourtListCard);
+export default withStyles(styles)(FoodCourtCard);

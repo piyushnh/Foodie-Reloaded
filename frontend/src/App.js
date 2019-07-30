@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import Navbar from './containers/Navbar';
+import Navbar from './components/Navigation/Navbar';
+import BottomNavbar from './components/Navigation/BottomNavbar';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 
 // redux imports
 import { connect } from 'react-redux';
@@ -8,6 +10,14 @@ import * as actions from './store/actions/auth';
 
 import BaseRouter from './routes';
 
+const styles = theme => ({
+  root: {
+    // display: 'flex', 
+    // flexWrap: 'wrap',  
+
+  },
+
+});
 
 class App extends Component {
 
@@ -16,15 +26,15 @@ class App extends Component {
   }
 
   render() {
+    const {classes} = this.props;
     return (
       <Router>
-        <div>
+        <div className={classes.root}>
             <Navbar {...this.props}/>
 
-              <div className="container">
                 <BaseRouter />
-              </div>
 
+            {this.props.isAuthenticated ? <BottomNavbar/>: null}
         </div>
      </Router>
 
@@ -44,4 +54,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));

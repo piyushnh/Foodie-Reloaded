@@ -1,8 +1,8 @@
 import React from 'react';
-import FoodCourtListCard from '../components/FoodCourtListItem';
+import FoodCourtCard from './FoodCourt';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from "react-redux";
-
+import Container from '@material-ui/core/Container';
 import { Spin, Icon } from 'antd';
 import axios from "axios";
 
@@ -27,7 +27,7 @@ class FoodCourtList extends React.Component {
     constructor(props) {
     super(props);
     this.state = {
-      restaurants: [],
+      foodCourts: [],
       isLoading : true
     };
   }
@@ -46,7 +46,7 @@ class FoodCourtList extends React.Component {
 
     axios
       .get("http://localhost:8000/restaurant/nearbyfoodcourts/")
-      .then(res => this.setState({ restaurants: res.data }) )
+      .then(res => this.setState({ foodCourts: res.data }) )
       .catch(err => console.log(err));
   }
 
@@ -62,9 +62,9 @@ class FoodCourtList extends React.Component {
 
     var isLoading = this.state.isLoading
 
-    const restaurants = this.state.restaurants
+    const foodCourts = this.state.foodCourts
     return(
-      <div>
+      <Container>
       {
         isLoading
 
@@ -74,19 +74,16 @@ class FoodCourtList extends React.Component {
 
         :
 
-        restaurants.map((restaurant)=>
+        foodCourts.map((foodCourt)=>
         <>
         <br />
-        <FoodCourtListCard key={restaurant.id} data={restaurant} />
+         <FoodCourtCard key={foodCourt.id} data={foodCourt} />
         <br />
         </>
         )
-
-
       }
-    </div>
-
-
+      </Container>
+      
   )
   }
 
