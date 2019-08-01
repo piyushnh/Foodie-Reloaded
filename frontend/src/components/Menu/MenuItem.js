@@ -121,6 +121,10 @@ const styles = theme => ({
         this.props.handleMenuItemClick(this.item, 'ADD');
    }
 
+   handleCancel(){
+     
+   }
+
     handleAddButtonClick() {
 
       const cart = this.props.cart;
