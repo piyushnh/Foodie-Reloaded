@@ -1,11 +1,14 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
 
+
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
     }
 }
+
+
 
 export const authSuccess = token => {
     return {
@@ -96,7 +99,6 @@ export const authCheckState = () => {
         }
     }
 
-
 // dispatch(checkAuthTimeout(3600));
 // dispatch(checkAuthTimeout(3600));
 // else {
@@ -105,3 +107,6 @@ export const authCheckState = () => {
 //         dispatch(logout());
 //     }
 // dispatch(checkAuthTimeout( (expirationDate.getTime() - new Date().getTime()) / 1000) );
+
+
+

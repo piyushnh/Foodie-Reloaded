@@ -8,6 +8,11 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import * as actions from '../../store/actions/order/action';
+import { connect } from 'react-redux';
+import AlertDialog from '../Utility/warningDialog';
+
+
 
 
 const styles = theme => ({
@@ -88,53 +93,82 @@ const styles = theme => ({
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
     this.handlePlusClick = this.handlePlusClick.bind(this);
     this.handleMinusClick = this.handleMinusClick.bind(this);
+    this.handleAccept = this.handleAccept.bind(this);
     this.state = {
       quantity:0,
+      showAlert: false
     };
+    this.item = this.props.data;
+    this.dialog = null;
+
+   }
+
+   componentDidMount() {
+     let orderList = this.props.cart.orderList;
+     orderList.forEach(element => {
+       if (element.item.id === this.item.id)
+       {
+      this.setState({quantity: element.quantity});
+       }
+     });
    }
   
+   handleAccept(){
+    const currentRestaurant = this.props.currentRestaurant;
+
+    this.props.resetCart(currentRestaurant, []);
+          this.setState({quantity: 1});
+        this.props.handleMenuItemClick(this.item, 'ADD');
+   }
+
     handleAddButtonClick() {
+
+      const cart = this.props.cart;
+    const currentRestaurant = this.props.currentRestaurant;
+
+    if (!cart.restaurant || cart.restaurant.id != currentRestaurant.id)
+    { 
+      this.setState({showAlert: true});
+    }
+    else
+    {
       this.setState({quantity: 1});
-      let orderList = this.props.orderList ;
-      let item = this.props.data;
-      let orderItem = {item:item, quantity: 1 };//hack fix this
-      orderList.push(orderItem);
-      this.props.onOrderListChange(orderList);
-  
+        this.props.handleMenuItemClick(this.item, 'ADD');
+    }
    }
+
+   
   
     handlePlusClick() {
+      
+      
       this.setState({quantity: this.state.quantity + 1});
-      let orderList = this.props.orderList ;
-      let orderItem = orderList.pop();
-      orderItem.quantity = this.state.quantity + 1;
-      orderList.push(orderItem);
-      this.props.onOrderListChange(orderList);
+      this.props.handleMenuItemClick(this.item, 'PLUS');
+
+    
    }
   
     handleMinusClick() {
       this.setState({quantity: this.state.quantity - 1});
-      let orderList = this.props.orderList ;
-      let orderItem = orderList.pop();
-      if (orderItem.quantity == 1)
-      {
-      }
-      else {
-        orderItem.quantity -= 1;
-        orderList.push(orderItem);
-      }
-      this.props.onOrderListChange(orderList);
+      this.props.handleMenuItemClick(this.item, 'MINUS');
+
+      
    }
   
      render()
      {
        const { classes } = this.props;
-       const  item = this.props.data; //item is menuItem
+       const  item = this.item; //item is menuItem
        let quantity =this.state.quantity;
        let button;
        let vegIcon;
+
+       let dialog = null;
+       const title = 'Reset cart?';
+       const desc = 'Cart already contains items from '+ this.props.cart.restaurant.name + '. '
+                    + 'Do you want to replace them?';
   
-       if (!quantity)
+       if (quantity === 0)
        {
          button = (<Button className={classes.button} onClick={this.handleAddButtonClick}>
                       Add
@@ -149,6 +183,13 @@ const styles = theme => ({
                    </Button>);
        }
 
+       if (this.state.showAlert)
+       {
+        dialog = <AlertDialog description={desc} title={title} handleaccept={this.handleAccept}/>;
+       }
+       
+
+
        if (item.classification === 'non-vegetarian' || item.classification === 'Non-Vegetarian' )
        {
            vegIcon = (<img className={classes.vegIcon} src="https://img.icons8.com/color/48/000000/non-vegetarian-food-symbol.png"></img>);
@@ -162,6 +203,7 @@ const styles = theme => ({
   
        return (
                     <div className={classes.root}>
+                    {dialog}
                      <GridListTile key={item.id} className={classes.tile} >
                         <img src={item.image} alt={item.name} className={classes.itemImage}/>
                     </GridListTile>
@@ -189,6 +231,19 @@ const styles = theme => ({
   
   
   }
+  const mapStateToProps = (state) => {
+    return {
+       cart: state.orderPageReducer.cart,
+       currentRestaurant: state.orderPageReducer.currentRestaurant
+    }
+}
+
+  const mapDispatchToProps = dispatch => {
+  return {
+    handleMenuItemClick: (orderList, type) => dispatch(actions.handleMenuItemClick(orderList, type)),
+    resetCart: (restaurant, orderList) => dispatch(actions.resetCart(restaurant, orderList)),
+  }
+}
   
 
-  export default withStyles(styles)(MenuGridItem);
+  export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MenuGridItem));

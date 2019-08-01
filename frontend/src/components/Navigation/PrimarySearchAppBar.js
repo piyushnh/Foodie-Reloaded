@@ -21,7 +21,7 @@ import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/auth';
+import * as actions from '../../store/actions/auth/action';
 
 
 const styles = theme => ({

@@ -8,6 +8,8 @@ import MenuGridItem from './MenuItem';
 import Paper from '@material-ui/core/Paper';
 import LoadingSpinner from '../Utility/LoadingSpinner';
 import Typography from '@material-ui/core/Typography';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/order/action';
 
 
   
@@ -80,18 +82,25 @@ import Typography from '@material-ui/core/Typography';
   
     constructor(props) {
     super(props);
-    this.onOrderListChange = this.onOrderListChange.bind(this);
     this.onOrderPlacement = this.onOrderPlacement.bind(this);
     this.state = {
       categories : [],
-      orderList: [],
+      // orderList: [],
       loading: true,
     };
+    this.orderList = this.props.cart.orderList;
+    // this.cart = this.props.cart;
    }
-  
+   
+  //  componentDidMount()
+  //  {
+  //   this.props.setCurrentRestaurant(this.props.location.state)
+  //  }
+
    componentWillMount()
    {
-     const {restaurantID} = this.props.location.state
+     const {restaurant} = this.props.location.state
+     const restaurantID = restaurant.id
      var token = localStorage.getItem('token')
      axios.defaults.headers.common = {
      "Content-Type": "application/json",
@@ -104,21 +113,21 @@ import Typography from '@material-ui/core/Typography';
        .catch(err => console.log(err));
    }
   
-   onOrderListChange(orderList){
-     this.setState({orderList: orderList});
-   }
+   
   
    onOrderPlacement(){
   
-     let orderList = this.state.orderList;
+     let orderList = this.orderList;
   
      if (! orderList[0])
      {
        alert("Please Add Items");
      }
      else {
-       const {restaurantID} = this.props.location.state
-       const {restaurantName} = this.props.location.state
+
+       const {restaurant} = this.props.location.state
+       const restaurantID = restaurant.id
+       const restaurantName = restaurant.name
        var token = localStorage.getItem('token')
        axios.defaults.headers.common = {
        "Content-Type": "application/json",
@@ -150,7 +159,7 @@ import Typography from '@material-ui/core/Typography';
     {
       const { classes } = this.props;
       const  categories = this.state.categories;
-      const  orderList = this.state.orderList;
+      const  cart = this.props.cart;
 
       let menu;
 
@@ -171,7 +180,7 @@ import Typography from '@material-ui/core/Typography';
                 (item =>
                   (
   
-                    <MenuGridItem data={item} orderList={orderList} onOrderListChange={this.onOrderListChange}  />
+                    <MenuGridItem data={item} cart={cart}  />
                   )
   
                 )
@@ -188,7 +197,7 @@ import Typography from '@material-ui/core/Typography';
           </div>
   
           <Button variant="contained" color="primary" onClick={this.onOrderPlacement} className={classes.orderButton}>
-            <p>{orderList.length + 'items' }</p>
+            <p>{ 'items' }</p>
           Place Order
           </Button>
           </> ;
@@ -209,6 +218,19 @@ import Typography from '@material-ui/core/Typography';
   MenuGridList.propTypes = {
     classes: PropTypes.object.isRequired,
   };
+
+  const mapStateToProps = (state) => {
+    return {
+       restaurant: state.currentRestaurant,
+       cart: state.orderPageReducer.cart
+    }
+}
+
+//   const mapDispatchToProps = dispatch => {
+//   return {
+//       setCurrentRestaurant: (restaurant) => dispatch(actions.setCurrentRestaurant(restaurant))
+//   }
+// }
   
-  export default withStyles(styles)(MenuGridList);
+  export default connect(mapStateToProps, null)(withStyles(styles)(MenuGridList));
   

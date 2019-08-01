@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 // redux imports
 import { connect } from 'react-redux';
-import * as actions from './store/actions/auth';
+import * as actions from './store/actions/auth/action';
 
 import BaseRouter from './routes';
 
