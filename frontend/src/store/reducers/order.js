@@ -5,6 +5,7 @@ const initialState = {
     cart: {
         restaurant: null,
         orderList: [],
+        display: false
     },
     currentRestaurant: null,
 
@@ -14,7 +15,8 @@ const resetCart = (state, action) => {
     return {...state, 
         cart: {
             restaurant: action.cart.restaurant,
-            orderList: action.cart.orderList
+            orderList: action.cart.orderList,
+            restaurant: action.cart.display,
         }
     };
 }
@@ -34,8 +36,14 @@ const setOrderList = (state, action) => {
     };
 }
 
-
-
+const setCartDisplay = (state, action) => {
+    return {...state, 
+        cart: {
+            ...state.cart,
+            display: true,
+        }
+    };
+}
 
 
 const orderPageReducer = (state=initialState, action) => {
@@ -44,6 +52,7 @@ const orderPageReducer = (state=initialState, action) => {
         case actionTypes.CURRENT_RESTAURANT: return setCurrentRestaurant(state, action);
         case actionTypes.ORDERLIST_CHANGED: return setOrderList(state, action);
         case actionTypes.RESET_CART: return resetCart(state, action);
+        case actionTypes.SET_CART_DISPLAY: return setCartDisplay(state, action);
         default:
             return state;
     }

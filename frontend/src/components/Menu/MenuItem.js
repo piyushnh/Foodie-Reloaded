@@ -121,16 +121,14 @@ const styles = theme => ({
         this.props.handleMenuItemClick(this.item, 'ADD');
    }
 
-   handleCancel(){
-     
-   }
+  
 
     handleAddButtonClick() {
 
       const cart = this.props.cart;
     const currentRestaurant = this.props.currentRestaurant;
 
-    if (!cart.restaurant || cart.restaurant.id != currentRestaurant.id)
+    if (cart.restaurant && cart.restaurant.id != currentRestaurant.id)
     { 
       this.setState({showAlert: true});
     }
@@ -166,12 +164,17 @@ const styles = theme => ({
        let quantity =this.state.quantity;
        let button;
        let vegIcon;
-
+       
+       let title, desc;
        let dialog = null;
-       const title = 'Reset cart?';
-       const desc = 'Cart already contains items from '+ this.props.cart.restaurant.name + '. '
-                    + 'Do you want to replace them?';
-  
+       if (this.props.cart.restaurant)
+       {
+        title = 'Reset cart?';
+        desc = 'Cart already contains items from '+ this.props.cart.restaurant.name + '. '
+                     + 'Do you want to replace them?';
+   
+       }
+
        if (quantity === 0)
        {
          button = (<Button className={classes.button} onClick={this.handleAddButtonClick}>

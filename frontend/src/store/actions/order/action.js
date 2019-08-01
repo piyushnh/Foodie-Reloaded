@@ -1,12 +1,19 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
 
-export const resetCart = (restaurant, orderList) => {
+export const displayCart = () => {
+    return {
+        type: actionTypes.SET_CART_DISPLAY,
+    }
+}
+
+export const resetCart = (restaurant=null, orderList=[], displayStatus=false) => {
     return {
         type: actionTypes.RESET_CART,
         cart: {
             restaurant: restaurant,
             orderList: orderList,
+            display: displayStatus,
         }
     }
 }
@@ -46,17 +53,21 @@ let orderItem = orderList[index];
 
 switch (type) {
     
-    case 'ADD': 
+    case 'ADD': if (!cart.restaurant)
+                    dispatch(resetCart(currentRestaurant));
                 let temp = {item:item, quantity: 1 };//hack fix this
                 orderList.push(temp);
+                dispatch(displayCart());
                 break;
     case 'PLUS': orderList[index].quantity += 1;
                 break;
     case 'MINUS':  if (orderItem.quantity == 1)
                     {
                         orderList.splice(index, 1);
-                        if (orderList.isEmpty)
-                            dispatch(resetCart(null, []));
+                        if (orderList.length === 0)
+                        {
+                            dispatch(resetCart());
+                        }
                     }
                     else {
                         orderList[index].quantity -= 1;

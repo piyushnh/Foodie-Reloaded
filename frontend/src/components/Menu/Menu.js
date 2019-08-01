@@ -10,6 +10,7 @@ import LoadingSpinner from '../Utility/LoadingSpinner';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/order/action';
+import CartIcon from '../Orders/cartIcon';
 
 
   
@@ -168,7 +169,10 @@ import * as actions from '../../store/actions/order/action';
       else
       {
           menu =  <>
+          
           <div className="container">
+          
+          
           <GridList cellHeight={500} style={{margin: '1em 0 0 0'}} className={classes.gridList}>
   
           {
@@ -208,6 +212,12 @@ import * as actions from '../../store/actions/order/action';
       return (
         <Paper className={classes.root}>
             {menu}
+            {
+              this.props.cart.display 
+              ? <CartIcon /> 
+              : null
+  
+            }
         </Paper>
         )
     }
