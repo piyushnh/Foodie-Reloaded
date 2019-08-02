@@ -116,7 +116,7 @@ const styles = theme => ({
    handleAccept(){
     const currentRestaurant = this.props.currentRestaurant;
 
-    this.props.resetCart(currentRestaurant, []);
+    this.props.resetCart(currentRestaurant);
           this.setState({quantity: 1});
         this.props.handleMenuItemClick(this.item, 'ADD');
    }
@@ -128,13 +128,14 @@ const styles = theme => ({
       const cart = this.props.cart;
     const currentRestaurant = this.props.currentRestaurant;
 
-    if (cart.restaurant && cart.restaurant.id != currentRestaurant.id)
+    if (cart.restaurant && cart.restaurant.id !== currentRestaurant.id)
     { 
       this.setState({showAlert: true});
     }
     else
-    {
-      this.setState({quantity: 1});
+    { 
+        
+        this.setState({quantity: 1});
         this.props.handleMenuItemClick(this.item, 'ADD');
     }
    }
@@ -248,7 +249,7 @@ const styles = theme => ({
   const mapDispatchToProps = dispatch => {
   return {
     handleMenuItemClick: (orderList, type) => dispatch(actions.handleMenuItemClick(orderList, type)),
-    resetCart: (restaurant, orderList) => dispatch(actions.resetCart(restaurant, orderList)),
+    resetCart: (restaurant, orderList) => dispatch(actions.resetCart(restaurant)),
   }
 }
   

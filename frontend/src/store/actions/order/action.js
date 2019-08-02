@@ -7,13 +7,13 @@ export const displayCart = () => {
     }
 }
 
-export const resetCart = (restaurant=null, orderList=[], displayStatus=false) => {
+export const resetCart = (restaurant=null, orderList=[], display=false) => {
     return {
         type: actionTypes.RESET_CART,
         cart: {
-            restaurant: restaurant,
-            orderList: orderList,
-            display: displayStatus,
+            restaurant,
+            orderList,
+            display,
         }
     }
 }

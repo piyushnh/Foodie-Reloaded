@@ -16,7 +16,7 @@ const resetCart = (state, action) => {
         cart: {
             restaurant: action.cart.restaurant,
             orderList: action.cart.orderList,
-            restaurant: action.cart.display,
+            display: action.cart.display,
         }
     };
 }

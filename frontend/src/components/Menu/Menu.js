@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button';
 import MenuGridItem from './MenuItem';
 import Paper from '@material-ui/core/Paper';
 import LoadingSpinner from '../Utility/LoadingSpinner';
-import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/order/action';
 import CartIcon from '../Orders/cartIcon';
@@ -22,6 +21,7 @@ import CartIcon from '../Orders/cartIcon';
       alignContent:'space-between',
     //   overflow: 'hidden',
       backgroundColor: theme.palette.background.paper,
+      // bottom: '50px',
     },
     gridList: {
     //   width: '400',
@@ -168,11 +168,8 @@ import CartIcon from '../Orders/cartIcon';
         menu = <LoadingSpinner></LoadingSpinner>;
       else
       {
-          menu =  <>
-          
+          menu = (  
           <div className="container">
-          
-          
           <GridList cellHeight={500} style={{margin: '1em 0 0 0'}} className={classes.gridList}>
   
           {
@@ -199,12 +196,7 @@ import CartIcon from '../Orders/cartIcon';
           }
           </GridList>
           </div>
-  
-          <Button variant="contained" color="primary" onClick={this.onOrderPlacement} className={classes.orderButton}>
-            <p>{ 'items' }</p>
-          Place Order
-          </Button>
-          </> ;
+          );
           
       }
 
