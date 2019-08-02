@@ -23,7 +23,7 @@ from django.shortcuts import redirect
 #important to post to a url
 import requests
 
-from apps.restaurants.models import MerchantProfile
+from .models import MerchantProfile
 from . import Checksum
 
 

@@ -7,6 +7,7 @@ from django.contrib.gis import geos
 from geopy.geocoders import GoogleV3
 from geopy.exc import GeocoderQueryError
 
+from apps.paytm.models import MerchantProfile as PaytmMerchantProfile
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -17,16 +18,7 @@ except ImportError:
     from django.contrib.auth.models import User
 # Create your models here.
 
-class MerchantProfile(models.Model):
-    merchant = models.OneToOneField(User,on_delete=models.CASCADE,related_name='merchant', help_text='The menus that this category belongs to, i.e. \'Lunch\'.')
-    phone_number = models.CharField(max_length = 10, blank=False)
-    paytm_merchant_id = models.CharField(max_length=20, unique=True)
-    paytm_merchant_key = models.CharField(max_length=20, unique=True)
 
-
-
-    def __str__(self):
-        return str(self.merchant)
 
 class FoodCourt(models.Model):
     name = models.CharField(max_length = 100)
@@ -65,7 +57,7 @@ class FoodCourt(models.Model):
 
 class Restaurant(models.Model):
     name = models.CharField(max_length = 100)
-    merchant = models.ForeignKey(MerchantProfile, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
+    paytm_merchant = models.ForeignKey(PaytmMerchantProfile, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     foodcourt = models.ForeignKey(FoodCourt, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     address = models.CharField(max_length=100, null=True)
     cover_pic = models.ImageField(upload_to = 'media/restaurant_pics',blank=False )

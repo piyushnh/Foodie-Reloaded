@@ -6,6 +6,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
+import { Link } from 'react-router-dom';
 
 
 
@@ -35,13 +36,8 @@ const useStyles = makeStyles(theme => ({
       fontWeight: 'bold',
       color: 'white'
   }
-//   absolute: {
-//     position: 'fixed',
-//     bottom: '70px',
-//     right: theme.spacing(3),
-//   },
-}));
 
+}));
 function CartIcon(props) {
   const classes = useStyles(props.cart);
 
@@ -64,6 +60,7 @@ function CartIcon(props) {
 
 
   return (
+    <Link to={`/foodcourts/${props.cart.restaurant.name}/order/`}>
     <Fab variant="extended"  className={`${classes.fab} ${classes.root}`}>
         <Typography className = {classes.label}>
             GO TO CART
@@ -72,6 +69,7 @@ function CartIcon(props) {
            <ShoppingCartIcon className={classes.cart}/>
         </Badge>
       </Fab>
+    </Link>
   );
 }
 

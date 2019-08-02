@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
 import axios from "axios";
+import { connect } from 'react-redux';
 
 
 
@@ -66,40 +67,40 @@ class OrderSummary extends React.Component {
    };
   }
 
-  componentDidMount()
-  {
-    const {order} = this.props.location.state;
+  // componentDidMount()
+  // {
+  //   const {order} = this.props.location.state;
 
-    console.log(order);
-    // storing the order item in browser cache
-    localStorage.setItem('orderData',JSON.stringify(order));
+  //   console.log(order);
+  //   // storing the order item in browser cache
+  //   localStorage.setItem('orderData',JSON.stringify(order));
 
-    const data = {
-      'MID': order.restaurant.merchant,
-      'ORDER_ID':order.id,
-      'CUST_ID':order.customer.email,
-      'TXN_AMOUNT':order.amount,
-    }
+  //   const data = {
+  //     'MID': order.restaurant.merchant,
+  //     'ORDER_ID':order.id,
+  //     'CUST_ID':order.customer.email,
+  //     'TXN_AMOUNT':order.amount,
+  //   }
 
-    var token = localStorage.getItem('token')
-    axios.defaults.headers.common = {
-    "Content-Type": "application/json",
-    Authorization: `Token ${token}`
-    }
+  //   var token = localStorage.getItem('token')
+  //   axios.defaults.headers.common = {
+  //   "Content-Type": "application/json",
+  //   Authorization: `Token ${token}`
+  //   }
 
-    axios
-      .post(`http://127.0.0.1:8000/restaurant/paytm/payment/`, data)
-      .then(res => {
+  //   axios
+  //     .post(`http://127.0.0.1:8000/restaurant/paytm/payment/`, data)
+  //     .then(res => {
 
-           if (res.status === 200) {
-             // console.log(res.data)
-             this.setState({
-               paytm_data:res.data
-             });
-           }
-         })
-      .catch(err => console.log(err));
-  }
+  //          if (res.status === 200) {
+  //            // console.log(res.data)
+  //            this.setState({
+  //              paytm_data:res.data
+  //            });
+  //          }
+  //        })
+  //     .catch(err => console.log(err));
+  // }
 
   handlePayment()
   {
@@ -120,15 +121,15 @@ class OrderSummary extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const {order} = this.props.location.state
+    const orderList = this.props.cart.orderList;
     let count=0;
-    let items = order.items;
-    const quantities = order.quantities;
+    // let items = order.items;
+    // const quantities = order.quantities;
     const paytm_data = this.state.paytm_data;
 
 
 
-    const object = {items:order.items, quantities:order.quantities}
+    // const object = {items:order.items, quantities:order.quantities}
     return (
       <Grid container className={classes.root} spacing={16}>
       <List className={classes.root}
@@ -136,7 +137,7 @@ class OrderSummary extends React.Component {
       >
 
       {
-        items.map(function(item,index)
+        orderList.map(function(element)
         {
 
 
@@ -144,7 +145,7 @@ class OrderSummary extends React.Component {
             <>
             <ListItem alignItems="flex-start">
               <ListItemText
-                primary={item.name +" x "+quantities[index].number}
+                primary={element.item.name +" x "+element.quantity}
               />
             </ListItem>
              <Divider variant="inset" className={classes.divider} component="li" />
@@ -157,7 +158,7 @@ class OrderSummary extends React.Component {
 
        </List>
 
-       <Paper className={classes.paper}>
+       {/*<Paper className={classes.paper}>
         <Typography variant="h6" component="h5">
           Total amount : {order.amount}
         </Typography>
@@ -176,6 +177,7 @@ class OrderSummary extends React.Component {
 
         <input type="submit" value="Submitsdff" />
       </form>
+      */}
 
 
       <Fab
@@ -200,4 +202,33 @@ OrderSummary.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(OrderSummary);
+const mapStateToProps = (state) => {
+  return {
+     cart: state.orderPageReducer.cart,
+  }
+}
+
+
+export default connect(mapStateToProps, null)(withStyles(styles)(OrderSummary));
+// <GridItem xs={12} sm={12} md={6}>
+// <Card>
+//   <CardHeader color="warning">
+//     <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
+//     <p className={classes.cardCategoryWhite}>
+//       New employees on 15th September, 2016
+//     </p>
+//   </CardHeader>
+//   <CardBody>
+//     <Table
+//       tableHeaderColor="warning"
+//       tableHead={["ID", "Name", "Salary", "Country"]}
+//       tableData={[
+//         ["1", "Dakota Rice", "$36,738", "Niger"],
+//         ["2", "Minerva Hooper", "$23,789", "Curaçao"],
+//         ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
+//         ["4", "Philip Chaney", "$38,735", "Korea, South"]
+//       ]}
+//     />
+//   </CardBody>
+// </Card>
+// </GridItem>
