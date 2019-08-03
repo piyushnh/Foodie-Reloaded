@@ -99,27 +99,29 @@ class MenuItemList(ListAPIView):
 # @login_required
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
-def create_order(request, restaurant_id):
+def create_order(request):
     """
     List all code snippets, or create a new snippet.
     """
 
     if request.method == 'POST':
-        data=request.data
+        cart=request.data
+        restaurant_id = cart['restaurant']['id']
         amount = 0
         restaurant = Restaurant.objects.get(id = restaurant_id)
         # serializer = SnippetSerializer(data=request.data)
         order = Order(customer=request.user, restaurant=restaurant)
+       
         order.save()
 
 
 
-        for a in data:
-            item = a['item']
-            amount += item['price'] * a['quantity']
+        for element in cart['orderList']:
+            item = element['item']
+            amount += item['price'] * element['quantity']
 
             order.items.add(item['id'])
-            order.quantities.create(number = a['quantity'])
+            order.quantities.create(number = element['quantity'])
 
         order.amount = amount
         order.save()

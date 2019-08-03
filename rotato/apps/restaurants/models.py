@@ -2,6 +2,7 @@ from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+import uuid
 
 from django.contrib.gis import geos
 from geopy.geocoders import GoogleV3
@@ -179,17 +180,18 @@ class MenuItem(models.Model):
 
 
 class Order(models.Model):
+    order_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     customer = models.ForeignKey(User,on_delete=models.CASCADE,related_name='orders',  )
     restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE,related_name='orders',)
     amount = models.IntegerField(default=0, verbose_name='amount', )
     items = models.ManyToManyField(MenuItem, related_name='orders')#name orders means all the orders a dish has been a part of
 
     def __str__(self):
-        return str(self.id)
+        return str(self.order_id)
 
 class Quantity(models.Model):
     number = models.IntegerField(default=0)
-    order = models.ForeignKey(Order,on_delete=models.CASCADE, related_name='quantities' )
+    order = models.ForeignKey(Order,on_delete=models.CASCADE, related_name='quantities',null=True )
 
     def __str__(self):
         return str(self.number)

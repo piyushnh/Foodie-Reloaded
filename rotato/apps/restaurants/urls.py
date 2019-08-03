@@ -23,7 +23,7 @@ urlpatterns = [
             view = MenuItemList.as_view(),
              name="menu_item_list" ),
 
-    url(r'^foodcourt/restaurants/(?P<restaurant_id>[\w-]+)/order/$',
+    url(r'^foodcourt/restaurants/order/create/$',
             view =create_order,
              name="create_order" ),
 
