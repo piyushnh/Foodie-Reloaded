@@ -31,7 +31,6 @@ urlpatterns = [
             view =OrderSummary.as_view(),
              name="order_summary" ),
              
-    url(r'^paytm/', include('apps.paytm.urls')),
 
 
 ]

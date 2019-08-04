@@ -8,6 +8,7 @@ const initialState = {
         display: false
     },
     currentRestaurant: null,
+    orderData: {}
 
 }
 
@@ -44,6 +45,11 @@ const setCartDisplay = (state, action) => {
         }
     };
 }
+const setOrderData = (state, action) => {
+    return {...state, 
+        orderData: action.orderData
+    };
+}
 
 
 const orderPageReducer = (state=initialState, action) => {
@@ -53,6 +59,7 @@ const orderPageReducer = (state=initialState, action) => {
         case actionTypes.ORDERLIST_CHANGED: return setOrderList(state, action);
         case actionTypes.RESET_CART: return resetCart(state, action);
         case actionTypes.SET_CART_DISPLAY: return setCartDisplay(state, action);
+        case actionTypes.ORDER_PLACED: return setOrderData(state, action);
         default:
             return state;
     }

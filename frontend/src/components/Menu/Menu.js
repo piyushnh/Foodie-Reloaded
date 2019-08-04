@@ -83,7 +83,6 @@ import CartIcon from '../Orders/cartIcon';
   
     constructor(props) {
     super(props);
-    this.onOrderPlacement = this.onOrderPlacement.bind(this);
     this.state = {
       categories : [],
       // orderList: [],
@@ -114,46 +113,6 @@ import CartIcon from '../Orders/cartIcon';
        .catch(err => console.log(err));
    }
   
-   
-  
-   onOrderPlacement(){
-  
-     let orderList = this.orderList;
-  
-     if (! orderList[0])
-     {
-       alert("Please Add Items");
-     }
-     else {
-
-       const {restaurant} = this.props.location.state
-       const restaurantID = restaurant.id
-       const restaurantName = restaurant.name
-       var token = localStorage.getItem('token')
-       axios.defaults.headers.common = {
-       "Content-Type": "application/json",
-       Authorization: `Token ${token}`
-       }
-  
-       axios
-         .post(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/${restaurantID}/order/`, this.state.orderList)
-         .then(res => {
-  
-              if (res.status === 201) {
-  
-                console.log(res.data);
-  
-                this.props.history.push({
-                  pathname:'/foodcourts/'+restaurantName+'/order/',
-                  state:{order:res.data}
-                });
-  
-              }
-            })
-         .catch(err => console.log(err));
-     }
-  
-   }
   
   
     render()

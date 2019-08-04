@@ -16,6 +16,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import PaytmHistory
 from django.shortcuts import redirect
+import requests
+import json
 
 #signals
 
@@ -31,88 +33,86 @@ from . import Checksum
 
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
-def payment(request):
+def initiatePayment(request):
 
-    order = request.data
+    try: 
 
-    # MERCHANT_KEY = settings.PAYTM_MERCHANT_KEY
-    merchant_id = order['MID']
-    merchant = MerchantProfile.objects.get(id=merchant_id)
-    merchant_id = merchant.paytm_merchant_id
-    merchant_key = merchant.paytm_merchant_key
+            order = request.data
+            
+            merchant_id = str(order['restaurant']['paytm_merchant'])
+            order_id = str(order['order_id'])
+            merchant_key = str(MerchantProfile.objects.get(merchant_id = merchant_id).key)
 
-    bill_amount = str(order['TXN_AMOUNT'])
-    order_id = str(order['ORDER_ID'])
-    cust_id = order['CUST_ID']
+            
 
+        
+            
+            #******************In case we wanna do custom checkout
+            #refer to this https://developer.paytm.com/docs/v1/custom-checkout/ ***********************
+            # params = {
+            #     "body":{
+            #     "requestType": "Payment",
+            #     "orderId": order_id,
+            #     "websiteName":"WEBSTAGING",
+            #     "mid": merchant_id,
+            #     "txnAmount": {
+            #         "value": str(order['amount']),
+            #         "currency": "INR"
+            #     },    
+            #     "userInfo": {"custId":str(order['customer']) },
+                
+            #     }
+            
 
-    order_id = Checksum.__id_generator__(size=50,salt=order_id)
-    cust_id = Checksum.__id_generator__(size=64,salt=cust_id)
+            # }
+            # params["head"] = {
+            #  "channelId": "WAP",
+            # "signature"	: checksum
+            # }
+            item = PaytmHistory.objects.create(customer=request.user, ORDERID = order_id )
+            callback_url = "http://127.0.0.1:8000/paytm/response/"
 
-    item = PaytmHistory.objects.create(user=request.user, ORDERID = order_id )
-    print(item)
+            paytmParams = {
+                    'MID':merchant_id,
+                    'ORDER_ID':order_id,
+                    'CUST_ID':str(order['customer']),
+                    'TXN_AMOUNT': str(order['amount']),
+                    'WEBSITE':'WEBSTAGING',
+                    'INDUSTRY_TYPE_ID':'Retail',
+                    'CHANNEL_ID':'WEB',
+                    'CALLBACK_URL':callback_url,
+                    'MOBILE_NO':'7777777777',
+                }
 
-    get_lang = "/" + get_language() if get_language() else ''
-    # CALLBACK_URL = settings.HOST_URL + get_lang + settings.PAYTM_CALLBACK_URL
-    # CALLBACK_URL = "http://127.0.0.1:8000/restaurant/paytm/response/"
-    CALLBACK_URL = "http://127.0.0.1:8000/restaurant/paytm/response/"
-    # Generating unique temporary ids
-    data_dict = {
-                'MID':merchant_id,
-                'ORDER_ID':order_id,
-                'CUST_ID':cust_id,
-                'TXN_AMOUNT': bill_amount,
-                'WEBSITE':'WEBSTAGING',
-                'INDUSTRY_TYPE_ID':'Retail',
-                'CHANNEL_ID':'WEB',
-                'CALLBACK_URL':CALLBACK_URL,
-                'MOBILE_NO':'7777777777',
-            }
-    param_dict = data_dict
+        
+            # checksum =  Checksum.generate_checksum_by_str(json.dumps(params["body"]), merchant_key)
+            paytmParams['CHECKSUMHASH'] =  Checksum.generate_checksum(paytmParams, merchant_key)
+            
 
-    param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(data_dict, merchant_key)
-    # param_dict['TXN_AMOUNT'] = bill_amount
+            return Response(paytmParams,status=status.HTTP_200_OK)
+    except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # return render(request,template_name="payment.html",context={'paytmdict':param_dict})
-
-    # url = "https://securegw-stage.paytm.in/theia/processTransaction/"
-    # r = requests.post(url,data=param_dict)
-
-    # print(r.status_code)
-    # r.raise_for_status()
-    # print(r.json())
-    # print(r.headers)
-
-    return Response(param_dict,status=status.HTTP_200_OK)
 
 
 @csrf_exempt
+@api_view(['POST'])
 def response(request):
-    print(request.user.id)
-    if request.method == "POST":
-        print('Response post is made')
 
         data_dict = {}
         for key in request.POST:
             data_dict[key] = request.POST[key]
 
         merchant_id = data_dict['MID']
-        MERCHANT_KEY = MerchantProfile.objects.get(paytm_merchant_id = merchant_id).paytm_merchant_key
-        print('Response post is made')
+        MERCHANT_KEY = MerchantProfile.objects.get(merchant_id = merchant_id).key
 
         order_id = data_dict['ORDERID']
 
         try:
             verify = Checksum.verify_checksum(data_dict, MERCHANT_KEY, data_dict['CHECKSUMHASH'])
-            print(verify)
 
             if verify:
                 paytm_history_object = PaytmHistory.objects.filter(ORDERID = order_id).update(**data_dict)
-                print(paytm_history_object)
-                print('Response post is made')
-                print('gfgfg')
-                print('gfgfg')
-                print('gfgfg')
                 return redirect('http://localhost:3000/foodcourts/order/response')
             else:
                 return HttpResponse("checksum verify failed")
@@ -120,14 +120,18 @@ def response(request):
         except:
             HttpResponse('Invalid Checksum!')
 
-    return HttpResponse(status=200)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # request_finished(response,sender=None)
 
 @permission_classes((IsAuthenticated, ))
 @api_view(['GET'])
 def  order_response(request):
-    order_details = PaytmHistory.objects.filter(user=request.user).last()
-    order_details = PaytmHistorySerializer(order_details)
+    try:
+        order_details = PaytmHistory.objects.filter(customer=request.user).last()
+        order_details = PaytmHistorySerializer(order_details)
 
-    return Response(order_details.data, status=status.HTTP_200_OK)
+        return Response(order_details.data, status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

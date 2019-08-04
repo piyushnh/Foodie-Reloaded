@@ -7,6 +7,13 @@ export const displayCart = () => {
     }
 }
 
+export const setOrderData = (orderData) => {
+    return {
+        type: actionTypes.ORDER_PLACED,
+        orderData
+    }
+}
+
 export const resetCart = (restaurant=null, orderList=[], display=false) => {
     return {
         type: actionTypes.RESET_CART,

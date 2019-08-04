@@ -1,0 +1,3 @@
+Google:
+	 Client ID: 449128478291-rqnpgik43g7b9nmr17eb21e48637ejf6.apps.googleusercontent.com
+	 Secret key: zmNwzc6YfMYYHarZgH1W9a0V

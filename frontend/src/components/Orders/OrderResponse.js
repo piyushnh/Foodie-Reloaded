@@ -88,7 +88,7 @@ class OrderResponse extends React.Component {
       }
 
       axios
-        .get(`http://127.0.0.1:8000/restaurant/paytm/order_response/`)
+        .get(`http://127.0.0.1:8000/paytm/order_response/`)
         .then(res => {
 
              if (res.status === 200) {

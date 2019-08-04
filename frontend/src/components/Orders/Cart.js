@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
 import axios from "axios";
 import { connect } from 'react-redux';
+import * as actions from '../../store/actions/order/action';
+
 
 
 
@@ -57,11 +59,11 @@ const styles = theme => ({
 });
 
 
-class OrderSummary extends React.Component {
+class Cart extends React.Component {
 
   constructor(props) {
   super(props);
-  this.handlePayment = this.handlePayment.bind(this);
+  this.proceedToPayment = this.proceedToPayment.bind(this);
    this.state = {
      paytm_data: {}
    };
@@ -101,6 +103,44 @@ class OrderSummary extends React.Component {
   //        })
   //     .catch(err => console.log(err));
   // }
+  onOrderPlacement(){
+  
+    let orderList = this.orderList;
+ 
+    if (! orderList[0])
+    {
+      alert("Please Add Items");
+    }
+    else {
+
+      const {restaurant} = this.props.location.state
+      const restaurantID = restaurant.id
+      const restaurantName = restaurant.name
+      var token = localStorage.getItem('token')
+      axios.defaults.headers.common = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`
+      }
+ 
+      axios
+        .post(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/${restaurantID}/order/`, this.state.orderList)
+        .then(res => {
+ 
+             if (res.status === 201) {
+ 
+               console.log(res.data);
+ 
+               this.props.history.push({
+                 pathname:'/foodcourts/'+restaurantName+'/order/',
+                 state:{order:res.data}
+               });
+ 
+             }
+           })
+        .catch(err => console.log(err));
+    }
+ 
+  }
 
   handlePayment()
   {
@@ -114,6 +154,31 @@ class OrderSummary extends React.Component {
          })
       .catch(err => console.log(err));
   }
+
+proceedToPayment()
+{
+  const cart = this.props.cart;
+  var token = localStorage.getItem('token')
+  axios.defaults.headers.common = {
+  "Content-Type": "application/json",
+  Authorization: `Token ${token}`
+  }
+
+  axios
+    .post(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/order/create/`, cart)
+    .then(res => {
+
+         if (res.status === 201) {
+
+          this.props.setOrderData(res.data);
+           this.props.history.push({
+             pathname:'/foodcourts/restaurants/payment'
+           });
+
+         }
+       })
+    .catch(err => console.log(err));
+}
 
 
 
@@ -158,13 +223,9 @@ class OrderSummary extends React.Component {
 
        </List>
 
-       {/*<Paper className={classes.paper}>
-        <Typography variant="h6" component="h5">
-          Total amount : {order.amount}
-        </Typography>
-      </Paper>
+       
 
-
+      {/*
       <form action="https://securegw-stage.paytm.in/theia/processTransaction">
         {
 
@@ -185,7 +246,7 @@ class OrderSummary extends React.Component {
         size="medium"
         color="primary"
         aria-label="Add"
-        onClick={this.handlePayment}
+        onClick={this.proceedToPayment}
         className={classes.fab}
       >
         Pay with paytm
@@ -198,7 +259,7 @@ class OrderSummary extends React.Component {
   }
 }
 
-OrderSummary.propTypes = {
+Cart.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -208,8 +269,13 @@ const mapStateToProps = (state) => {
   }
 }
 
+  const mapDispatchToProps = dispatch => {
+  return {
+      setOrderData: (orderData) => dispatch(actions.setOrderData(orderData))
+  }
+}
 
-export default connect(mapStateToProps, null)(withStyles(styles)(OrderSummary));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Cart));
 // <GridItem xs={12} sm={12} md={6}>
 // <Card>
 //   <CardHeader color="warning">

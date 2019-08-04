@@ -21,7 +21,7 @@ class MerchantProfile(models.Model):
         return str(self.owner)
 
 class PaytmHistory(models.Model):
-    user = models.ForeignKey(User,on_delete = models.CASCADE ,related_name='paytm_payment')
+    customer = models.ForeignKey(User,on_delete = models.CASCADE ,related_name='paytm_payments',null=True)
     ORDERID = models.CharField('ORDER ID', max_length=50)
     TXNDATE = models.DateTimeField('TXN DATE', default=timezone.now)
     TXNID = models.CharField('TXN ID', max_length=64)

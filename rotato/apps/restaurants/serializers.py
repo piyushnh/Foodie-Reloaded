@@ -65,7 +65,7 @@ class QuantitySerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
   quantities = QuantitySerializer(read_only=True,many=True,) #method to include foreign relations
   items = MenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
-  customer = UserSerializer(read_only=True,) #method to include foreign relations
+#   customer = UserSerializer(read_only=True,) #method to include foreign relations
   restaurant = RestaurantSerializer(read_only=True,) #method to include foreign relations
 
   class Meta:
