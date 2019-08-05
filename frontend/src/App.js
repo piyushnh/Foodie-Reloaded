@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 // redux imports
 import { connect } from 'react-redux';
 import * as actions from './store/actions/auth/action';
+import LoginDialog from './components/Authentication/LoginOptions'
 
 import BaseRouter from './routes';
 
@@ -20,6 +21,20 @@ const styles = theme => ({
 });
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+        openLoginDialog: true
+    };
+
+    this.handleLoginDialogClose = this.handleLoginDialogClose.bind(this);
+   }
+  
+  handleLoginDialogClose()
+  {
+    this.setState({openLoginDialog: false});
+  }
 
   componentDidMount() {
     this.props.onTryAutoSignup();
@@ -35,6 +50,7 @@ class App extends Component {
                 <BaseRouter />
 
             {this.props.isAuthenticated ? <BottomNavbar/>: null}
+            <LoginDialog open={this.state.openLoginDialog} handleClose={this.handleLoginDialogClose} />
         </div>
      </Router>
 
