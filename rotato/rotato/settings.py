@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from apps.socialAuth.settings import * 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
 
-    #authentication papckages
+    #authentication packages
     'rest_framework.authtoken',
     'rest_auth',
     'allauth',
@@ -58,8 +59,9 @@ INSTALLED_APPS = [
     'apps.friendship',
     'apps.restaurants',
     'apps.paytm',
+    'apps.socialAuth',
 
-]
+] + SOCIAL_AUTH_INSTALLED_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #IMPORTANT to add this above all middleware for CORS to work
@@ -87,6 +89,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -95,6 +99,10 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
+
+    #needed for social authentication
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
 
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',

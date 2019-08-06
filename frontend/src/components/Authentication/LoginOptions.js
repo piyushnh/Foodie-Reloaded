@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import GoogleLogin from './Google/login';
 
 
 const styles = theme => ({
@@ -34,12 +35,28 @@ class LoginDialog extends React.Component {
       //   this.state = {
       //     open: false
       //  }
+      this.onGoogleSignIn = this.onGoogleSignIn.bind(this);  
+      this.onGoogleSignOut = this.onGoogleSignOut.bind(this);  
       }
 
   // handleClickOpen() {
   //   this.setState({open:true});
   //   }
+  onGoogleSignIn(googleUser)
+  { 
+    // console.log('sifoisfio');
+    // const id_token = googleUser.getAuthResponse().id_token;
+    // console.log(id_token);
 
+  }
+  onGoogleSignOut()
+  { 
+    // var auth2 = gapi.auth2.getAuthInstance();
+    // auth2.signOut().then(function () {
+    //   console.log('User signed out.');
+    // });
+
+  }
 
 
   render()
@@ -61,7 +78,7 @@ class LoginDialog extends React.Component {
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
-          <div class="g-signin2" data-onsuccess="onSignIn"></div>
+          <GoogleLogin />
           <DialogActions>
           <Button onClick={this.props.handleClose} color="primary">
             Later
