@@ -35,44 +35,24 @@ class LoginDialog extends React.Component {
       //   this.state = {
       //     open: false
       //  }
-      this.onGoogleSignIn = this.onGoogleSignIn.bind(this);  
-      this.onGoogleSignOut = this.onGoogleSignOut.bind(this);  
+      
       }
 
-  // handleClickOpen() {
-  //   this.setState({open:true});
-  //   }
-  onGoogleSignIn(googleUser)
-  { 
-    // console.log('sifoisfio');
-    // const id_token = googleUser.getAuthResponse().id_token;
-    // console.log(id_token);
-
-  }
-  onGoogleSignOut()
-  { 
-    // var auth2 = gapi.auth2.getAuthInstance();
-    // auth2.signOut().then(function () {
-    //   console.log('User signed out.');
-    // });
-
-  }
+  
 
 
   render()
   {
 
-    const Transition = React.forwardRef(function Transition(props, ref) {
-      return <Slide direction="up" ref={ref} {...props} />;
-    });
+    // const Transition = React.forwardRef(function Transition(props, ref) {
+    //   return <Slide direction="up" ref={ref} {...props} />;
+    // });
 
     return (
       <div>
         
         <Dialog
           open={this.props.open}
-          TransitionComponent={Transition}
-          keepMounted
           onClose={this.props.handleClose}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description"

@@ -33,6 +33,7 @@ class App extends Component {
   
   handleLoginDialogClose()
   {
+    console.log('Closed');
     this.setState({openLoginDialog: false});
   }
 

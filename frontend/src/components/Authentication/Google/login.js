@@ -39,11 +39,9 @@ class GoogleAuth extends React.Component {
   //   }
   onLogin(response)
   { 
-      console.log(response);
     
     if (response.code)
     {   
-        console.log(response);
 
         axios.defaults.headers.common = {
             "Content-Type": "application/json",
@@ -54,7 +52,7 @@ class GoogleAuth extends React.Component {
             axios
               .post(`http://127.0.0.1:8000/auth/social/exchange_auth/`, response)
               .then(res => {
-
+                console.log(res);
                 let payload = {
                     'access_token': res.data
                 }
@@ -92,6 +90,7 @@ class GoogleAuth extends React.Component {
             clientId={CLIENT_ID}
             buttonText="Login"
             responseType = 'code'
+            accessType = 'offline'
             onSuccess={this.onLogin}
             onFailure={this.onLogin}
             cookiePolicy={'single_host_origin'}

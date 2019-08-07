@@ -47,7 +47,7 @@ def exchange_auth_code(request):
         email = credentials.id_token['email']
 
         # credentials = json.dumps(credentials)
-        return Response( access_token,status=status.HTTP_200_OK)
+        return Response( credentials.to_json(),status=status.HTTP_200_OK)
 
 
 
