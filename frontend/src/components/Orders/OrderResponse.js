@@ -6,12 +6,14 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
+import { connect } from "react-redux";
+
 
 
 
 import axios from "axios";
 
-const responseStyles = theme => ({
+const styles = theme => ({
   root: {
     flexGrow: 1,
     textAlign : 'center',
@@ -81,10 +83,9 @@ class OrderResponse extends React.Component {
 
   componentDidMount()
   {
-      var token = localStorage.getItem('token')
       axios.defaults.headers.common = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`
+      Authorization: `Token ${this.props.token}`
       }
 
       axios
@@ -157,8 +158,13 @@ OrderResponse.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    token: state.authReducer.token
+  };
+};
 
-export default withRouter(withStyles(responseStyles)(OrderResponse));
+export default connect(mapStateToProps)(withStyles(styles)(OrderResponse));
 
 
 

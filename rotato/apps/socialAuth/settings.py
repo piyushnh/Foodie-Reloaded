@@ -1,3 +1,5 @@
+import os
+
 
 SOCIAL_AUTH_INSTALLED_APPS = [
     # include your own set of  applications here,
@@ -51,6 +53,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH_SECRET = '0SgeuYh6o4jH7CDdt9etKF3O'
 # working properly.
 # SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
+
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "client_secret.json")
 
 # config per http://psa.matiasaguirre.net/docs/configuration/django.html#django-admin
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']

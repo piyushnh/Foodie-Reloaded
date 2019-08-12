@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import Restaurant from './Restaurant' ;
+import { connect } from "react-redux";
 
 import axios from "axios";
 
@@ -46,10 +47,9 @@ class RestaurantList extends React.Component {
   componentWillMount()
   {
     const {foodcourtID} = this.props.location.state
-    var token = localStorage.getItem('token')
     axios.defaults.headers.common = {
     "Content-Type": "application/json",
-    Authorization: `Token ${token}`
+    Authorization: `Token ${this.props.token}`
     }
 
     axios
@@ -74,6 +74,10 @@ class RestaurantList extends React.Component {
   )
   }
 }
+const mapStateToProps = state => {
+  return {
+    token: state.authReducer.token
+  };
+};
 
-
-export default withStyles(styles)(RestaurantList);
+export default connect(mapStateToProps)(withStyles(styles)(RestaurantList));

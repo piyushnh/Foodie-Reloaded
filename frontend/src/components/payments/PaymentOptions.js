@@ -73,10 +73,9 @@ class PaymentOptions extends React.Component {
 
   initiatePayment()
   {
-      const token = localStorage.getItem('token')
       axios.defaults.headers.common = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`
+      Authorization: `Token ${this.props.token}`
       }
   
       axios
@@ -148,7 +147,8 @@ PaymentOptions.propTypes = {
 const mapStateToProps = (state) => {
   return {
      orderData: state.orderPageReducer.orderData,
-  }
+     token: state.authReducer.token
+    }
 }
 
 //   const mapDispatchToProps = dispatch => {

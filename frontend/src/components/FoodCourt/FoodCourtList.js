@@ -37,11 +37,10 @@ class FoodCourtList extends React.Component {
 
   componentWillMount()
   {
-    var token = localStorage.getItem('token')
 
     axios.defaults.headers.common = {
     "Content-Type": "application/json",
-    Authorization: `Token ${token}`
+    Authorization: `Token ${this.props.token}`
     }
 
     axios
@@ -91,7 +90,7 @@ class FoodCourtList extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    token: state.token
+    token: state.authReducer.token
   };
 };
 

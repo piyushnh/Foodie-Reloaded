@@ -4,7 +4,7 @@ import BottomNavbar from './components/Navigation/BottomNavbar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
-// redux imports
+// redux importss
 import { connect } from 'react-redux';
 import * as actions from './store/actions/auth/action';
 import LoginDialog from './components/Authentication/LoginOptions'
@@ -38,7 +38,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.props.onTryAutoSignup();
+    // this.props.onTryAutoSignup();
   }
 
   render() {
@@ -50,8 +50,10 @@ class App extends Component {
 
                 <BaseRouter />
 
-            {this.props.isAuthenticated ? <BottomNavbar/>: null}
-            <LoginDialog open={this.state.openLoginDialog} handleClose={this.handleLoginDialogClose} />
+            {this.props.isAuthenticated 
+              ? <BottomNavbar/>
+            
+            : <LoginDialog open={this.state.openLoginDialog} handleClose={this.handleLoginDialogClose} />}
         </div>
      </Router>
 
@@ -61,14 +63,14 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.token !== null
+    isAuthenticated: state.authReducer.token !== null
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onTryAutoSignup: () => dispatch(actions.authCheckState())
-  }
-}
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     onTryAutoSignup: () => dispatch(actions.authCheckState())
+//   }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));
+export default connect(mapStateToProps, null)(withStyles(styles)(App));

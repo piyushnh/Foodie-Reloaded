@@ -27,7 +27,7 @@ SECRET_KEY = '9oxiw%z+j)!kk(1i-8g*80cd6(50t3v2^v@1i-y)6h#@9o9#ro'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
 
 CORS_ORIGIN_ALLOW_ALL=True
 
@@ -108,6 +108,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 
 )
+
 
 
 REST_FRAMEWORK = {

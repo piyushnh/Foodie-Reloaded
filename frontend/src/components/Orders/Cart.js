@@ -116,10 +116,9 @@ class Cart extends React.Component {
       const {restaurant} = this.props.location.state
       const restaurantID = restaurant.id
       const restaurantName = restaurant.name
-      var token = localStorage.getItem('token')
       axios.defaults.headers.common = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`
+      Authorization: `Token ${this.props.token}`
       }
  
       axios
@@ -158,10 +157,9 @@ class Cart extends React.Component {
 proceedToPayment()
 {
   const cart = this.props.cart;
-  var token = localStorage.getItem('token')
   axios.defaults.headers.common = {
   "Content-Type": "application/json",
-  Authorization: `Token ${token}`
+  Authorization: `Token ${this.props.token}`
   }
 
   axios
@@ -266,6 +264,8 @@ Cart.propTypes = {
 const mapStateToProps = (state) => {
   return {
      cart: state.orderPageReducer.cart,
+    token: state.authReducer.token
+
   }
 }
 

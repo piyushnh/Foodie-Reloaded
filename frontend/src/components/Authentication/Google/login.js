@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import {CLIENT_ID} from './authCredentials';
 import  axios from 'axios';
+import * as actions from '../../../store/actions/auth/action';
 
 
 const styles = theme => ({
@@ -53,18 +54,16 @@ class GoogleAuth extends React.Component {
               .post(`http://127.0.0.1:8000/auth/social/exchange_auth/`, response)
               .then(res => {
                 console.log(res);
-                let payload = {
-                    'access_token': res.data
-                }
-                let token = localStorage.getItem('token')
-                axios.defaults.headers.common = {
-                "Content-Type": "application/json",
-                Authorization: `Token ${token}`
-                }
-             
+                
+                
                 axios
-                  .post(`http://127.0.0.1:8000/auth/social/exchange_token/google-oauth2/`, payload)
-                  .then(res => console.log(res) )
+                  .post(`http://127.0.0.1:8000/auth/social/exchange_token/google-oauth2/`, res.data)
+                  .then(res => {
+                    console.log(res);
+                    this.props.authLogin(res.data);
+
+
+                   } )
                   .catch(err => console.log(err));
               
               } )
@@ -108,10 +107,10 @@ class GoogleAuth extends React.Component {
 //     }
 // }
 
-//   const mapDispatchToProps = dispatch => {
-//   return {
-//       setCurrentRestaurant: (restaurant) => dispatch(actions.setCurrentRestaurant(restaurant))
-//   }
-// }
+  const mapDispatchToProps = dispatch => {
+  return {
+      authLogin: (token) => dispatch(actions.authLogin(token))
+  }
+}
   
-  export default connect(null, null)(withStyles(styles)(GoogleAuth));
+  export default connect(null, mapDispatchToProps)(withStyles(styles)(GoogleAuth));

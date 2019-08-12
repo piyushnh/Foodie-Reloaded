@@ -57,7 +57,7 @@ class LoginDialog extends React.Component {
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description"
         >
-          <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
+          <DialogTitle id="alert-dialog-slide-title">{"Sign In options"}</DialogTitle>
           <GoogleLogin />
           <DialogActions>
           <Button onClick={this.props.handleClose} color="primary">

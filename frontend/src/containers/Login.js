@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Icon, Input, Button, Spin, Layout } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import * as actions from '../store/actions/auth/action';
+import * as actions from '../store/actions/auth/old-action';
 import './login.css';
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;

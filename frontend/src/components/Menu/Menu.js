@@ -99,13 +99,13 @@ import CartIcon from '../Orders/cartIcon';
 
    componentWillMount()
    {
-     const {restaurant} = this.props.location.state
-     const restaurantID = restaurant.id
-     var token = localStorage.getItem('token')
+     const {restaurant} = this.props.location.state;
+     const restaurantID = restaurant.id;
      axios.defaults.headers.common = {
-     "Content-Type": "application/json",
-     Authorization: `Token ${token}`
-     }
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.props.token}`
+      }
+  
   
      axios
        .get(`http://127.0.0.1:8000/restaurant/menuitems/${restaurantID}`)
@@ -182,8 +182,9 @@ import CartIcon from '../Orders/cartIcon';
 
   const mapStateToProps = (state) => {
     return {
+       token: state.authReducer.token,
        restaurant: state.currentRestaurant,
-       cart: state.orderPageReducer.cart
+       cart: state.orderPageReducer.cart,
     }
 }
 
