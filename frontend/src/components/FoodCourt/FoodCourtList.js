@@ -44,7 +44,7 @@ class FoodCourtList extends React.Component {
     }
 
     axios
-      .get("http://localhost:8000/restaurant/nearbyfoodcourts/")
+      .get("http://localhost:8000/restaurants/nearbyfoodcourts/")
       .then(res => this.setState({ foodCourts: res.data }) )
       .catch(err => console.log(err));
   }

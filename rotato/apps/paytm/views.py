@@ -5,14 +5,14 @@ from django.utils.translation import get_language
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
-
+from rest_framework.permissions import AllowAny
 from .serializers import PaytmHistorySerializer
 
 
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import PaytmHistory
 from django.shortcuts import redirect
@@ -35,7 +35,7 @@ from . import Checksum
 @permission_classes((IsAuthenticated, ))
 def initiatePayment(request):
 
-    try: 
+    # try: 
 
             order = request.data
             
@@ -88,15 +88,17 @@ def initiatePayment(request):
             # checksum =  Checksum.generate_checksum_by_str(json.dumps(params["body"]), merchant_key)
             paytmParams['CHECKSUMHASH'] =  Checksum.generate_checksum(paytmParams, merchant_key)
             
+            print(paytmParams)
 
             return Response(paytmParams,status=status.HTTP_200_OK)
-    except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # except:
+    #         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 @csrf_exempt
-@api_view(['POST'])
+# @permission_classes([AllowAny])
+# @api_view(['POST'])
 def response(request):
 
         data_dict = {}

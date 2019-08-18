@@ -56,6 +56,10 @@ class FoodCourtCard extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
+  // componentDidMount()
+  // {
+  // }
+
 
 
   render() {

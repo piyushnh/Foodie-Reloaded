@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     url(r'^friendship/', include('apps.friendship.urls')),
-    url(r'^restaurant/', include('apps.restaurants.urls')),
+    url(r'^restaurants/', include('apps.restaurants.urls')),
     url(r'^paytm/', include('apps.paytm.urls')),
     url(r'^auth/', include('apps.socialAuth.urls')),
     url(r'^$', views.HomeView.as_view(), name='home'),

@@ -9,7 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import LoadingSpinner from '../Utility/LoadingSpinner';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/order/action';
-import CartIcon from '../Orders/cartIcon';
+import CartIcon from '../Orders/CartIcon';
 
 
   
@@ -108,7 +108,7 @@ import CartIcon from '../Orders/cartIcon';
   
   
      axios
-       .get(`http://127.0.0.1:8000/restaurant/menuitems/${restaurantID}`)
+       .get(`http://127.0.0.1:8000/restaurants/menuitems/${restaurantID}`)
        .then(res => this.setState({ categories: res.data, loading: false }) )
        .catch(err => console.log(err));
    }

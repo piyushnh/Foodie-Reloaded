@@ -6,7 +6,10 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
+import LoadingSpinner from '../Utility/LoadingSpinner';
 import { connect } from "react-redux";
+import {Link} from 'react-router-dom';
+import * as actions from '../../store/actions/order/action';
 
 
 
@@ -58,30 +61,14 @@ class OrderResponse extends React.Component {
 
   constructor(props) {
   super(props);
-  this.handlePaymentRetry = this.handlePaymentRetry.bind(this);
+
   this.state = {
-    responseData:{},
-  };
+    responseData: null
+  }
   }
 
 
-  handlePaymentRetry()
-  {
-
-    let data = JSON.parse(localStorage.getItem('orderData'));
-    let restaurantName = data["restaurant"]["name"];
-    console.log(restaurantName);
-    this.props.history.push({
-      pathname:'/foodcourts/'+restaurantName+'/order/',
-      state:{order:data}
-    });
-
-
-    // this.props.history.goBack()
-    // this.props.history.go(-3);
-  }
-
-  componentDidMount()
+  componentWillMount()
   {
       axios.defaults.headers.common = {
       "Content-Type": "application/json",
@@ -91,10 +78,8 @@ class OrderResponse extends React.Component {
       axios
         .get(`http://127.0.0.1:8000/paytm/order_response/`)
         .then(res => {
-
              if (res.status === 200) {
-               console.log(res.data);
-               this.setState({responseData: res.data});
+                this.setState({responseData: res.data});
              }
            })
         .catch(err => console.log(err));
@@ -107,17 +92,25 @@ class OrderResponse extends React.Component {
   render() {
     const { classes } = this.props;
     const data = this.state.responseData;
+    console.log(data);
     let display;
-    // const {data} = this.props.location.state
-
-    if (data['STATUS'] === "TXN_SUCCESS")
+    if (!data)
+      display = <LoadingSpinner />
+    else if (data['STATUS'] === "TXN_SUCCESS")
     {
+      this.props.setOrderData(null);
+      this.props.resetCart();
+
        display = (<>
               <Icon className = {classes.icon} color="primary">mood</Icon>
                   <Typography variant="h5" component="h3">
                       Transaction Successful
                   </Typography>
-
+                  <Link to="/" >
+                    <Button variant="contained" color="primary" className={classes.button} >
+                      Go to Home
+                    </Button>
+                  </Link>
 
                   </>
    );
@@ -131,12 +124,14 @@ class OrderResponse extends React.Component {
           </Typography>
 
           <Typography className = {classes.respMessage}>
-              Paytm's Response Message : {data['RESPMSG']}
+              Response Message : {data['RESPMSG']}
           </Typography>
-
-          <Button variant="contained" color="primary" className={classes.button} onClick = {this.handlePaymentRetry}>
-            Retry payment
-          </Button>
+          
+         <Link to={{ pathname: '/foodcourts/restaurants/payment', isRetryPayment: true }} >
+            <Button variant="contained" color="primary" className={classes.button} >
+              Retry payment
+            </Button>
+          </Link>
         </>
     );
     }
@@ -164,7 +159,13 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(OrderResponse));
+const mapDispatchToProps = dispatch => {
+  return {
+      setOrderData: (orderData) => dispatch(actions.setOrderData(orderData)),
+      resetCart: () => dispatch(actions.resetCart())
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(OrderResponse));
 
 
 

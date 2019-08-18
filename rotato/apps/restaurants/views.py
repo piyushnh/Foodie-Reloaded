@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from django.core import serializers
@@ -138,10 +138,14 @@ def create_order(request):
         # content = {'please move along': 'nothing to see here'}
         return Response(order.data,status=status.HTTP_201_CREATED)
 
-class OrderSummary(RetrieveAPIView):
+class OrderSummary(RetrieveAPIView, DestroyModelMixin):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
 
 
 

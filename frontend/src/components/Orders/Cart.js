@@ -6,7 +6,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import { withRouter } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +13,7 @@ import Fab from '@material-ui/core/Fab';
 import axios from "axios";
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/order/action';
+import { Link } from 'react-router-dom';
 
 
 
@@ -63,7 +63,6 @@ class Cart extends React.Component {
 
   constructor(props) {
   super(props);
-  this.proceedToPayment = this.proceedToPayment.bind(this);
    this.state = {
      paytm_data: {}
    };
@@ -122,7 +121,7 @@ class Cart extends React.Component {
       }
  
       axios
-        .post(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/${restaurantID}/order/`, this.state.orderList)
+        .post(`http://127.0.0.1:8000/restaurants/foodcourt/restaurants/${restaurantID}/order/`, this.state.orderList)
         .then(res => {
  
              if (res.status === 201) {
@@ -154,29 +153,7 @@ class Cart extends React.Component {
       .catch(err => console.log(err));
   }
 
-proceedToPayment()
-{
-  const cart = this.props.cart;
-  axios.defaults.headers.common = {
-  "Content-Type": "application/json",
-  Authorization: `Token ${this.props.token}`
-  }
 
-  axios
-    .post(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/order/create/`, cart)
-    .then(res => {
-
-         if (res.status === 201) {
-
-          this.props.setOrderData(res.data);
-           this.props.history.push({
-             pathname:'/foodcourts/restaurants/payment'
-           });
-
-         }
-       })
-    .catch(err => console.log(err));
-}
 
 
 
@@ -222,35 +199,17 @@ proceedToPayment()
        </List>
 
        
-
-      {/*
-      <form action="https://securegw-stage.paytm.in/theia/processTransaction">
-        {
-
-          Object.keys(paytm_data).map(key =>(
-            <input  name={key}  value={paytm_data[key]} className={classes.formInput}/>
-          )
-
-          )
-        }
-
-        <input type="submit" value="Submitsdff" />
-      </form>
-      */}
-
-
-      <Fab
+       <Link to='/foodcourts/restaurants/payment'>
+        <Fab
         variant="extended"
         size="medium"
         color="primary"
         aria-label="Add"
-        onClick={this.proceedToPayment}
         className={classes.fab}
       >
-        Pay with paytm
+        Proceed to Payment
       </Fab>
-
-
+     </Link>
 
       </Grid>
     );

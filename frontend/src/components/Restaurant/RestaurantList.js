@@ -53,7 +53,7 @@ class RestaurantList extends React.Component {
     }
 
     axios
-      .get(`http://127.0.0.1:8000/restaurant/foodcourt/restaurants/${foodcourtID}`)
+      .get(`http://127.0.0.1:8000/restaurants/foodcourt/members/${foodcourtID}`)
       .then(res => this.setState({ restaurants: res.data }) )
       .catch(err => console.log(err));
   }

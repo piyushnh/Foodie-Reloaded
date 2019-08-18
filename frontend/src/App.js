@@ -3,8 +3,9 @@ import Navbar from './components/Navigation/Navbar';
 import BottomNavbar from './components/Navigation/BottomNavbar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
+import GenericError from './components/ErrorHandlers/GenericError';
 
-// redux importss
+// redux imports
 import { connect } from 'react-redux';
 import * as actions from './store/actions/auth/action';
 import LoginDialog from './components/Authentication/LoginOptions'
@@ -47,8 +48,9 @@ class App extends Component {
       <Router>
         <div className={classes.root}>
             <Navbar {...this.props}/>
-
+              <GenericError>
                 <BaseRouter />
+              </GenericError>
 
             {this.props.isAuthenticated 
               ? <BottomNavbar/>

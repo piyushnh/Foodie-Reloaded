@@ -55,13 +55,19 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
 
+     'phonenumber_field',
+
 
     'apps.friendship',
     'apps.restaurants',
     'apps.paytm',
     'apps.socialAuth',
+    'apps.users',
 
 ] + SOCIAL_AUTH_INSTALLED_APPS
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #IMPORTANT to add this above all middleware for CORS to work
@@ -112,11 +118,7 @@ AUTHENTICATION_BACKENDS = (
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-        'rest_framework.permissions.IsAuthenticated',
-
-    ),
+    
     'DEFAULT_AUTHENTICATION_CLASSES': (
         #Then, we set the DEFAULT_AUTHENTICATION_CLASSES,
         # which determines which authentication methods the server will try when
@@ -124,6 +126,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
+
     ),
 }
 
