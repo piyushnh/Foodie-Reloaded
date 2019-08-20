@@ -10,8 +10,8 @@ except ImportError:
 # Create your models here.
 
 class MerchantProfile(models.Model):
-    owner = models.OneToOneField(User,on_delete=models.CASCADE,related_name='merchant', help_text='The menus that this category belongs to, i.e. \'Lunch\'.')
-    phone_number = models.CharField(max_length = 10, blank=False)
+    owner = models.OneToOneField(User,on_delete=models.CASCADE,related_name='paytm_merchant', help_text='The User this restaurant belongs to')
+    # phone_number = models.CharField(max_length = 10, blank=False)
     merchant_id = models.CharField(max_length=20, unique=True, primary_key=True)
     key = models.CharField(max_length=20, unique=True)
 

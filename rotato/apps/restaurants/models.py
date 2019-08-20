@@ -180,7 +180,7 @@ class MenuItem(models.Model):
 
 
 class Order(models.Model):
-    order_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    order_id = models.CharField(primary_key=True, max_length = 15)
     customer = models.ForeignKey(User,on_delete=models.CASCADE,related_name='orders',  )
     restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE,related_name='orders',)
     amount = models.IntegerField(default=0, verbose_name='amount', )
@@ -188,6 +188,15 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.order_id)
+
+    def save(self, *args, **kwargs):
+        while not self.order_id:
+            newId = str(uuid.uuid4()).replace('-','')[0:10]
+
+            if not Order.objects.filter(order_id = newId).exists():
+                self.order_id = newId
+
+        super().save(*args, **kwargs)
 
 class Quantity(models.Model):
     number = models.IntegerField(default=0)

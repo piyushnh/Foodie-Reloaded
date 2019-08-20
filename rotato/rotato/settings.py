@@ -28,6 +28,7 @@ SECRET_KEY = '9oxiw%z+j)!kk(1i-8g*80cd6(50t3v2^v@1i-y)6h#@9o9#ro'
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ROOT_HOST_URL = 'http://localhost:8000'
 
 CORS_ORIGIN_ALLOW_ALL=True
 
@@ -57,12 +58,13 @@ INSTALLED_APPS = [
 
      'phonenumber_field',
 
-
+    'apps.users',
     'apps.friendship',
     'apps.restaurants',
     'apps.paytm',
     'apps.socialAuth',
-    'apps.users',
+    'apps.user_profile',
+    'apps.restaurant_merchants'
 
 ] + SOCIAL_AUTH_INSTALLED_APPS
 

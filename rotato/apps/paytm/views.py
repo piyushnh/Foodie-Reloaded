@@ -35,7 +35,7 @@ from . import Checksum
 @permission_classes((IsAuthenticated, ))
 def initiatePayment(request):
 
-    # try: 
+    try: 
 
             order = request.data
             
@@ -88,11 +88,10 @@ def initiatePayment(request):
             # checksum =  Checksum.generate_checksum_by_str(json.dumps(params["body"]), merchant_key)
             paytmParams['CHECKSUMHASH'] =  Checksum.generate_checksum(paytmParams, merchant_key)
             
-            print(paytmParams)
 
             return Response(paytmParams,status=status.HTTP_200_OK)
-    # except:
-    #         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -101,36 +100,34 @@ def initiatePayment(request):
 # @api_view(['POST'])
 def response(request):
 
-        data_dict = {}
-        for key in request.POST:
-            data_dict[key] = request.POST[key]
+        try: 
+            data_dict = {}
+            for key in request.POST:
+                data_dict[key] = request.POST[key]
 
-        merchant_id = data_dict['MID']
-        MERCHANT_KEY = MerchantProfile.objects.get(merchant_id = merchant_id).key
+            merchant_id = data_dict['MID']
+            MERCHANT_KEY = MerchantProfile.objects.get(merchant_id = merchant_id).key
 
-        order_id = data_dict['ORDERID']
+            order_id = data_dict['ORDERID']
 
-        try:
+            
             verify = Checksum.verify_checksum(data_dict, MERCHANT_KEY, data_dict['CHECKSUMHASH'])
 
             if verify:
                 paytm_history_object = PaytmHistory.objects.filter(ORDERID = order_id).update(**data_dict)
-                return redirect('http://localhost:3000/foodcourts/order/response')
-            else:
-                return HttpResponse("checksum verify failed")
 
-        except:
-            HttpResponse('Invalid Checksum!')
+        finally:             
+            return redirect('http://localhost:3000/foodcourts/order/response/')
+            
 
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # request_finished(response,sender=None)
 
 @permission_classes((IsAuthenticated, ))
 @api_view(['GET'])
-def  order_response(request):
+def  order_response(request, order_id):
     try:
-        order_details = PaytmHistory.objects.filter(customer=request.user).last()
+        order_details = PaytmHistory.objects.filter(ORDERID=order_id)
         order_details = PaytmHistorySerializer(order_details)
 
         return Response(order_details.data, status=status.HTTP_200_OK)

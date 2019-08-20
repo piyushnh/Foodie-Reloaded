@@ -54,9 +54,28 @@ export const authLogin = (email, password) => {
         })
         .then(res => {
             const token = res.data.key;
-            const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
-            localStorage.setItem('token', token);
-            localStorage.setItem('expirationDate', expirationDate);
+            // const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
+            // localStorage.setItem('token', token);
+            // localStorage.setItem('expirationDate', expirationDate);
+            dispatch(authSuccess(token));
+        })
+        .catch(err => {
+            dispatch(authFail(err))
+        })
+    }
+}
+export const merchantLogin = (email, password) => {
+    return dispatch => {
+        dispatch(authStart());
+        axios.post('http://127.0.0.1:8000/restaurant_merchants/login/', {
+            email: email,
+            password: password
+        })
+        .then(res => {
+            const token = res.data.key;
+            // const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
+            // localStorage.setItem('token', token);
+            // localStorage.setItem('expirationDate', expirationDate);
             dispatch(authSuccess(token));
         })
         .catch(err => {
