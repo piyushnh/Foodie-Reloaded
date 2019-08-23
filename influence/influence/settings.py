@@ -73,7 +73,8 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-ASGI_APPLICATION = "influence.routing.application"
+
+
 
 
 MIDDLEWARE = [
@@ -243,3 +244,15 @@ JWT_AUTH = {
 
 
 GEOIP_PATH = os.path.join(BASE_DIR, "GeoLite2-City.mmdb")
+
+
+#stuff required for django-channels
+ASGI_APPLICATION = "influence.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

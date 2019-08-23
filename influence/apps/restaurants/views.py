@@ -31,6 +31,13 @@ MenuSerializer,MenuCategorySerializer, MenuItemSerializer, OrderSerializer)
 from django.contrib.gis import measure
 from django.contrib.gis import geos
 
+#To integrate channels
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+channel_layer = get_channel_layer()
+from django.forms.models import model_to_dict
+
+
 
 # Create your views here.
 def get_user_location(request):
@@ -129,6 +136,9 @@ def create_order(request):
 
 
         order = OrderSerializer(order)
+        async_to_sync(channel_layer.group_send)('restaurant_%s' % str(restaurant_id), {"type": "order.placed", 'order': order.data})
+        # print(order.data)
+
         # order = OrderSerializer(order, many=True)
 
 

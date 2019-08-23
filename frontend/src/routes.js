@@ -8,6 +8,7 @@ import Cart from "./components/Orders/Cart";
 import PaymentOptions from "./components/payments/PaymentOptions";
 import OrderResponse from "./components/Orders/OrderResponse";
 import MerchantLogin from "./components/MerchantView/Login";
+import Chat from "./components/MerchantView/Index";
 import FoodCourtList from "./components/FoodCourt/FoodCourtList";
 import Login from "./containers/Login";
 import Signup from "./containers/Signup";
@@ -18,6 +19,7 @@ const BaseRouter = () => (
       <Route exact path="/nearbyfoodcourts/" component={FoodCourtList} />
       <Route exact path="/login" component={Login} />
       <Route exact path="/merchant/login" component={MerchantLogin} />
+      <Route exact path="/chat" component={Chat} />
       <Route exact path="/signup" component={Signup} />
       <Route exact path='/nearbyfoodcourts/:food_name' name="food_court_restaurants" component={RestaurantList} />
       <Route exact path='/foodcourts/:restaurant_name/menu' name="food_court_restaurants" component={MenuGridList} />
