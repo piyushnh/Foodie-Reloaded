@@ -229,3 +229,4 @@ JWT_AUTH = {
 
 
 GEOIP_PATH = os.path.join(BASE_DIR, "GeoLite2-City.mmdb")
+
