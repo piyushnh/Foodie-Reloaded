@@ -21,47 +21,6 @@ const styles = theme => ({
 });
 
 class App extends Component {
-<<<<<<< 0971fb46f9b7b4c9fd7506f1e6e2b35c26102b36
-
-  constructor(props) {
-    super(props);
-    this.state = {
-        openLoginDialog: true
-    };
-
-    this.handleLoginDialogClose = this.handleLoginDialogClose.bind(this);
-   }
-  
-  handleLoginDialogClose()
-  {
-    console.log('Closed');
-    this.setState({openLoginDialog: false});
-  }
-
-  componentDidMount() {
-    // this.props.onTryAutoSignup();
-  }
-
-  render() {
-    const {classes} = this.props;
-    return (
-      <Router>
-        <div className={classes.root}>
-            <Navbar {...this.props}/>
-              <GenericError>
-                <BaseRouter />
-              </GenericError>
-
-            {this.props.isAuthenticated 
-              ? <BottomNavbar/>
-            
-            : <LoginDialog open={this.state.openLoginDialog} handleClose={this.handleLoginDialogClose} />}
-        </div>
-     </Router>
-
-    );
-  }
-=======
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -104,7 +63,6 @@ class App extends Component {
 			</Router>
 		);
 	}
->>>>>>> added
 }
 
 const mapStateToProps = state => {
