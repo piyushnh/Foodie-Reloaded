@@ -9,6 +9,7 @@ import PaymentOptions from "./components/payments/PaymentOptions";
 import OrderResponse from "./components/Orders/OrderResponse";
 import MerchantLogin from "./components/MerchantView/Login";
 import FoodCourtList from "./components/FoodCourt/FoodCourtList";
+import OrderList from "./components/OrderList/OrderList";
 import Login from "./containers/Login";
 import Signup from "./containers/Signup";
 import { Main as MainLayout, Minimal as MinimalLayout } from "./layouts";
@@ -24,6 +25,12 @@ const BaseRouter = () => (
 				exact
 				path="/nearbyfoodcourts/"
 				component={FoodCourtList}
+				layout={MainLayout}
+			/>
+			<RouteWithLayout
+				exact
+				path="/orders/"
+				component={OrderList}
 				layout={MainLayout}
 			/>
 			<RouteWithLayout

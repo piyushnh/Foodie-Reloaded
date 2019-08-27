@@ -1,5 +1,5 @@
 import React from "react";
-import FoodCourtCard from "./FoodCourt";
+import OrderCard from "./Order";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import Container from "@material-ui/core/Container";
@@ -24,11 +24,11 @@ const styles = theme => ({
 	}
 });
 
-class FoodCourtList extends React.Component {
+class OrderList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			foodCourts: [],
+			orders: [],
 			isLoading: true,
 			searchString: ""
 		};
@@ -42,7 +42,7 @@ class FoodCourtList extends React.Component {
 
 		axios
 			.get("http://localhost:8000/restaurants/nearbyfoodcourts/")
-			.then(res => this.setState({ foodCourts: res.data }))
+			.then(res => this.setState({ orders: res.data }))
 			.catch(err => console.log(err));
 	}
 
@@ -63,51 +63,31 @@ class FoodCourtList extends React.Component {
 
 	render() {
 		var isLoading = this.state.isLoading;
-		const foodCourts = this.state.foodCourts;
+		const orders = this.state.orders;
 
 		return (
-			// <Container>
-			// {
-			//   isLoading
-
-			//   ?
-
-			//   <Spin indicator={antIcon} />
-
-			//   :
-
-			//   foodCourts.map((foodCourt)=>
-			//   <>
-			//   <br />
-			//    <FoodCourtCard key={foodCourt.id} data={foodCourt} />
-			//   <br />
-			//   </>
-			//   )
-			// }
-			// </Container>
-
 			<Container>
 				{isLoading ? (
 					<Spin indicator={antIcon} />
 				) : (
 					<div>
-						{foodCourts ? (
+						{orders ? (
 							<div>
 								<TextField
 									style={{ padding: 24 }}
 									id="searchInput"
-									placeholder="Search for food courts"
+									placeholder="Search for orders"
 									margin="normal"
 									onChange={this.onSearchInputChange}
 								/>
 								<SearchResults
 									value={this.state.searchString}
-									data={foodCourts}
+									data={orders}
 									renderResults={results => (
 										<Grid container spacing={0} style={{ padding: 24 }}>
-											{results.map(foodCourt => (
+											{results.map(order => (
 												<Grid item xs={12} sm={6} lg={4} xl={3}>
-													<FoodCourtCard key={foodCourt.id} data={foodCourt} />
+													<OrderCard key={order.id} data={order} />
 												</Grid>
 											))}
 										</Grid>
@@ -115,7 +95,7 @@ class FoodCourtList extends React.Component {
 								/>
 							</div>
 						) : (
-							"No foodcourts found"
+							"No order found"
 						)}
 					</div>
 				)}
@@ -130,4 +110,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(FoodCourtList));
+export default connect(mapStateToProps)(withStyles(styles)(OrderList));
