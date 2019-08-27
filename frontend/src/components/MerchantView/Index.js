@@ -64,10 +64,22 @@ class Index extends React.Component {
         console.log('WebSocket Client Connected');
       };
      this.socket.onmessage = (res) => {
-        let newOrder = JSON.parse(JSON.parse(res.data));
+        let newOrder = JSON.parse(res.data);
         console.log(newOrder);
         this.setState({orderList:[...this.state.orderList,newOrder.order]});
       };
+
+    axios.defaults.headers.common = {
+    "Content-Type": "application/json",
+    Authorization: `Token ${this.props.token}`
+    }
+
+    axios
+      .get(`http://127.0.0.1:8000/restaurant_merchants/processing_orders/${restaurant_id}`)
+      .then(res => this.setState({ orderList: res.data }) )
+      .catch(err => console.log(err));
+
+
   }
 
   handleChange = event => {

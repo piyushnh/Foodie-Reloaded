@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from django.core import serializers
 
+from django.core.cache import cache
+
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import (
@@ -24,9 +26,9 @@ from django.shortcuts import render, get_object_or_404
 
 # from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .models import Restaurant, FoodCourt, Order
+from .models import Restaurant, FoodCourt, Order, MenuItem
 from .serializers import (RestaurantSerializer, FoodCourtSerializer,
-MenuSerializer,MenuCategorySerializer, MenuItemSerializer, OrderSerializer)
+MenuSerializer,MenuCategorySerializer, MenuItemSerializer, OrderSerializer, LightMenuItemSerializer)
 
 from django.contrib.gis import measure
 from django.contrib.gis import geos
@@ -51,7 +53,7 @@ def get_user_location(request):
 
 class NearbyRestaurantsView(ListAPIView):
     serializer_class = RestaurantSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.AllowAny, )
 
 
     def get_queryset(self):
@@ -64,13 +66,13 @@ class NearbyRestaurantsView(ListAPIView):
 
 class NearbyFoodCourtsView(ListAPIView):
     serializer_class = FoodCourtSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.AllowAny, )
 
 # (13.0055, 77.5692)
 
     def get_queryset(self):
         # latitude, longitude = get_user_location(self.request)
-        latitude, longitude = (13.0055, 77.5692);
+        latitude, longitude = (13.0055, 77.5692)
         user_location = geos.fromstr("POINT(%s %s)" % (longitude, latitude))
         distance_from_point = {'km': 10}
         nearby_foodcourts = FoodCourt.gis.filter(location__distance_lte=(user_location, measure.D(**distance_from_point)))
@@ -79,7 +81,7 @@ class NearbyFoodCourtsView(ListAPIView):
 
 class FoodCourtRestaurantList(ListAPIView):
     serializer_class = RestaurantSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.AllowAny, )
 
     def get_queryset(self):
         foodcourt_id = self.kwargs['foodcourt_id']
@@ -92,7 +94,7 @@ class FoodCourtRestaurantList(ListAPIView):
 
 class MenuItemList(ListAPIView):
     serializer_class = MenuCategorySerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.AllowAny, )
 
     def get_queryset(self):
         restaurant_id = self.kwargs['restaurant_id']
@@ -103,6 +105,29 @@ class MenuItemList(ListAPIView):
 
         return categories
 
+class MenuItemDetail(RetrieveAPIView):
+    serializer_class = LightMenuItemSerializer
+    permission_classes = (permissions.AllowAny, )
+    queryset = MenuItem.objects.all()
+
+class RestaurantDetail(RetrieveAPIView):
+    serializer_class = RestaurantSerializer
+    permission_classes = (permissions.AllowAny, )
+    queryset = MenuItem.objects.all()
+
+class ResetOrder(RetrieveAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get_object(self):
+        order_id = self.kwargs['order_id']
+        order = Order.objects.get(order_id=order_id)
+        order.save()
+
+        return order
+
+
+
 # @login_required
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
@@ -110,8 +135,7 @@ def create_order(request):
     """
     List all code snippets, or create a new snippet.
     """
-
-    if request.method == 'POST':
+    try:
         cart=request.data
         restaurant_id = cart['restaurant']['id']
         amount = 0
@@ -134,11 +158,10 @@ def create_order(request):
         order.save()
 
 
-
-        order = OrderSerializer(order)
-        async_to_sync(channel_layer.group_send)('restaurant_%s' % str(restaurant_id), {"type": "order.placed", 'order': order.data})
-        # print(order.data)
-
+        
+        serialized_order = OrderSerializer(order)
+        
+        cache.set(serialized_order.data['order_id'], serialized_order.data, 60*5)
         # order = OrderSerializer(order, many=True)
 
 
@@ -146,7 +169,10 @@ def create_order(request):
         #     return Response(status=status.HTTP_400_BAD_REQUEST)
             # return Response(serializer.data, status=status.HTTP_201_CREATED)
         # content = {'please move along': 'nothing to see here'}
-        return Response(order.data,status=status.HTTP_201_CREATED)
+        return Response(serialized_order.data,status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class OrderSummary(RetrieveAPIView, DestroyModelMixin):
     queryset = Order.objects.all()

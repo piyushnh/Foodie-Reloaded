@@ -7,6 +7,14 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .serializers import PaytmHistorySerializer
+from django.core.cache import cache
+
+
+#To integrate channels
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+channel_layer = get_channel_layer()
+from django.forms.models import model_to_dict
 
 
 from rest_framework import permissions
@@ -27,6 +35,9 @@ import requests
 
 from .models import MerchantProfile
 from . import Checksum
+
+from apps.restaurants.models import Order
+from apps.restaurants.serializers import OrderSerializer
 
 
 # Create your views here.
@@ -116,6 +127,25 @@ def response(request):
             if verify:
                 paytm_history_object = PaytmHistory.objects.filter(ORDERID = order_id).update(**data_dict)
 
+                if (data_dict['STATUS'] == 'TXN_SUCCESS'):
+                    
+                    serialized_order = cache.get(order_id)
+                    if serialized_order:
+                        restaurant_id = str(serialized_order['restaurant']['id'])
+                        serialized_order['is_paid'] = True
+                        cache.set(order_id, serialized_order)
+                    else:
+                        order = Order.objects.get(order_id = order_id)
+                        restaurant_id = str(order.restaurant.id)                    
+                        serialized_order = OrderSerializer(order).data
+
+
+
+
+                    async_to_sync(channel_layer.group_send)('restaurant_%s' % restaurant_id, {"type": "order.placed", 'order': serialized_order})
+
+
+
         finally:             
             return redirect('http://localhost:3000/foodcourts/order/response/')
             
@@ -128,9 +158,9 @@ def response(request):
 def  order_response(request, order_id):
     try:
         order_details = PaytmHistory.objects.filter(ORDERID=order_id)
-        order_details = PaytmHistorySerializer(order_details)
+        order_details = PaytmHistorySerializer(order_details, many=True)
 
-        return Response(order_details.data, status=status.HTTP_200_OK)
+        return Response(order_details.data[0], status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

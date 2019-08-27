@@ -1,8 +1,10 @@
-from channels.generic.websocket import JsonWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 import json
 from asgiref.sync import async_to_sync
 
-class OrderConsumer(JsonWebsocketConsumer):
+from apps.restaurants.models import Order
+
+class OrderConsumer(WebsocketConsumer):
     def connect(self):
         self.name = self.scope['url_route']['kwargs']['restaurant_id']
         self.group_name = 'restaurant_%s' % self.name
@@ -39,11 +41,14 @@ class OrderConsumer(JsonWebsocketConsumer):
     # Receive message from room group
     def order_placed(self, event):
 
-        print('sksu')
+        # print('sksu')
         order = event['order']
-        print(order)
 
         # Send message to WebSocket
-        self.send_json(content=json.dumps({
+        self.send(text_data=json.dumps({
             'order': order
         }))
+
+        order_id = order['order_id']
+        update = Order.objects.filter(order_id=order_id).update(is_paid=True)
+        print(update)

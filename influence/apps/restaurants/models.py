@@ -185,11 +185,16 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE,related_name='orders',)
     amount = models.IntegerField(default=0, verbose_name='amount', )
     items = models.ManyToManyField(MenuItem, related_name='orders')#name orders means all the orders a dish has been a part of
+    is_paid = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+
 
     def __str__(self):
         return str(self.order_id)
 
     def save(self, *args, **kwargs):
+        self.order_id = None
         while not self.order_id:
             newId = str(uuid.uuid4()).replace('-','')[0:10]
 

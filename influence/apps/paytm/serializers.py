@@ -16,4 +16,4 @@ class PaytmHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaytmHistory
-        fields = '__all__'
+        fields = ['RESPMSG','RESPCODE', 'TXNID',  'STATUS']
