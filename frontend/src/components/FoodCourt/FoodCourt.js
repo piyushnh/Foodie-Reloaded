@@ -75,17 +75,14 @@ class FoodCourtCard extends React.Component {
 					<Typography component="p">{restaurant.address}</Typography>
 				</CardContent>
 				<CardActions>
+				<Link to={{pathname:'/nearbyfoodcourts/'+restaurant.name, state: { foodcourtID: restaurant.id}}}>
 					<Button
 						size="small"
 						color="primary"
-						href={{
-							pathname: "/nearbyfoodcourts/" + restaurant.name,
-							state: { foodcourtID: restaurant.id }
-						}}
-						target="_blank"
 					>
 						View Restaurants
 					</Button>
+				 </Link>
 				</CardActions>
 			</Card>
 			// <Card className={classes.card}>
