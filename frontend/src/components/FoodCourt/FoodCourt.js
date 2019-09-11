@@ -79,7 +79,7 @@ class FoodCourtCard extends React.Component {
 				<CardActions>
 					<Link
 						to={{
-							pathname: path,
+							pathname: "/nearbyfoodcourts/" + restaurant.name,
 							state: { foodcourtID: restaurant.id }
 						}}
 					>
