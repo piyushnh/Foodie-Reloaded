@@ -163,12 +163,7 @@ import CartIcon from '../Orders/CartIcon';
       return (
         <Paper className={classes.root}>
             {menu}
-            {
-              this.props.cart.display 
-              ? <CartIcon /> 
-              : null
-  
-            }
+            
         </Paper>
         )
     }

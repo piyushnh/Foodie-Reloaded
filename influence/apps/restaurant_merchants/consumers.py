@@ -48,7 +48,3 @@ class OrderConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'order': order
         }))
-
-        order_id = order['order_id']
-        update = Order.objects.filter(order_id=order_id).update(is_paid=True)
-        print(update)

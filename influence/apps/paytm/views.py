@@ -129,16 +129,17 @@ def response(request):
 
                 if (data_dict['STATUS'] == 'TXN_SUCCESS'):
                     
-                    serialized_order = cache.get(order_id)
-                    if serialized_order:
-                        restaurant_id = str(serialized_order['restaurant']['id'])
-                        serialized_order['is_paid'] = True
-                        cache.set(order_id, serialized_order)
-                    else:
-                        order = Order.objects.get(order_id = order_id)
-                        restaurant_id = str(order.restaurant.id)                    
-                        serialized_order = OrderSerializer(order).data
-
+                    # serialized_order = cache.get(order_id)
+                    # if serialized_order:
+                    #     restaurant_id = str(serialized_order['restaurant']['id'])
+                    #     serialized_order['is_paid'] = True
+                    #     cache.set(order_id, serialized_order)
+                    # else:
+                    order = Order.objects.get(order_id = order_id)
+                    restaurant_id = str(order.restaurant.id)  
+                    order.is_paid = True
+                    order.save()
+                    serialized_order = OrderSerializer(order).data
 
 
 

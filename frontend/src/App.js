@@ -5,6 +5,9 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import GenericError from './components/ErrorHandlers/GenericError';
 
+import CartIcon from './components/Orders/CartIcon';
+
+
 // redux imports
 import { connect } from 'react-redux';
 import * as actions from './store/actions/auth/action';
@@ -51,6 +54,12 @@ class App extends Component {
               <GenericError>
                 <BaseRouter />
               </GenericError>
+              {
+                this.props.cart.display 
+                ? <CartIcon /> 
+                : null
+    
+              }
 
             {this.props.isAuthenticated 
               ? <BottomNavbar/>
@@ -65,7 +74,8 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.authReducer.token !== null
+    isAuthenticated: state.authReducer.token !== null,
+    cart: state.orderPageReducer.cart
   }
 }
 
