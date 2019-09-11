@@ -60,6 +60,8 @@ class FoodCourtCard extends React.Component {
 	render() {
 		const { classes } = this.props;
 		const restaurant = this.props.data;
+		const path = "/nearbyfoodcourts/".concat(restaurant.id);
+		console.log(path);
 
 		return (
 			<Card>
@@ -75,17 +77,16 @@ class FoodCourtCard extends React.Component {
 					<Typography component="p">{restaurant.address}</Typography>
 				</CardContent>
 				<CardActions>
-					<Button
-						size="small"
-						color="primary"
-						href={{
-							pathname: "/nearbyfoodcourts/" + restaurant.name,
+					<Link
+						to={{
+							pathname: path,
 							state: { foodcourtID: restaurant.id }
 						}}
-						target="_blank"
 					>
-						View Restaurants
-					</Button>
+						<Button size="small" color="primary">
+							View Restaurants
+						</Button>
+					</Link>
 				</CardActions>
 			</Card>
 			// <Card className={classes.card}>

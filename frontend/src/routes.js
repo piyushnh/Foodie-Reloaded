@@ -45,37 +45,37 @@ const BaseRouter = () => (
 				component={Signup}
 				layout={MainLayout}
 			/>
+			<RouteWithLayout
+				exact
+				path="/nearbyfoodcourts/:food_name"
+				component={RestaurantList}
+				layout={MainLayout}
+			/>
+			<RouteWithLayout
+				exact
+				path="/foodcourts/:restaurant_name/menu"
+				component={MenuGridList}
+				layout={MainLayout}
+			/>
+			<RouteWithLayout
+				exact
+				path="/foodcourts/:restaurant_name/order/"
+				component={Cart}
+				layout={MainLayout}
+			/>
+			<RouteWithLayout
+				exact
+				path="/foodcourts/restaurants/payment"
+				component={PaymentOptions}
+				layout={MainLayout}
+			/>
+			<RouteWithLayout
+				exact
+				path="/foodcourts/order/response"
+				component={OrderResponse}
+				layout={MainLayout}
+			/>
 		</ThemeProvider>
-		<Route
-			exact
-			path="/nearbyfoodcourts/:food_name"
-			name="food_court_restaurants"
-			component={RestaurantList}
-		/>
-		<Route
-			exact
-			path="/foodcourts/:restaurant_name/menu"
-			name="food_court_restaurants"
-			component={MenuGridList}
-		/>
-		<Route
-			exact
-			path="/foodcourts/:restaurant_name/order/"
-			name="food_court_restaurants_order"
-			component={Cart}
-		/>
-		<Route
-			exact
-			path="/foodcourts/restaurants/payment"
-			name="food_court_restaurants_payment"
-			component={PaymentOptions}
-		/>
-		<Route
-			exact
-			path="/foodcourts/order/response"
-			name="food_court_restaurants_response"
-			component={OrderResponse}
-		/>
 	</Switch>
 );
 
