@@ -59,7 +59,7 @@ class NearbyRestaurantsView(ListAPIView):
     def get_queryset(self):
         latitude, longitude = get_user_location(self.request)
         user_location = geos.fromstr("POINT(%s %s)" % (longitude, latitude))
-        distance_from_point = {'km': 10}
+        distance_from_point = {'km': 100}
         nearby_restaurants = Restaurant.gis.filter(location__distance_lte=(user_location, measure.D(**distance_from_point)))
 
         return nearby_restaurants
@@ -74,7 +74,7 @@ class NearbyFoodCourtsView(ListAPIView):
         # latitude, longitude = get_user_location(self.request)
         latitude, longitude = (13.0055, 77.5692)
         user_location = geos.fromstr("POINT(%s %s)" % (longitude, latitude))
-        distance_from_point = {'km': 10}
+        distance_from_point = {'km': 100}
         nearby_foodcourts = FoodCourt.gis.filter(location__distance_lte=(user_location, measure.D(**distance_from_point)))
 
         return nearby_foodcourts
