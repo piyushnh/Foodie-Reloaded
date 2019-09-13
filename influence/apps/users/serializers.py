@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from .models import (PaytmHistory)
 
 try:
     from django.contrib.auth import get_user_model
@@ -8,12 +7,10 @@ try:
 except ImportError:
     from django.contrib.auth.models import User
 
-
-
-class PaytmHistorySerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     # menu = MenuSerializer(read_only=True,many=True,) #method to include foreign relations
 
 
     class Meta:
-        model = PaytmHistory
-        fields = ['RESPMSG','RESPCODE', 'TXNID',  'STATUS']
+        model = User
+        fields = ['id','first_name', 'last_name', 'email', 'is_merchant', 'mobile_number']

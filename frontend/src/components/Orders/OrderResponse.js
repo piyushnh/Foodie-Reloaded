@@ -61,7 +61,7 @@ class OrderResponse extends React.Component {
 
   constructor(props) {
   super(props);
-
+  this.timer = null;
   this.state = {
     responseData: null
   }
@@ -70,13 +70,14 @@ class OrderResponse extends React.Component {
 
   componentWillMount()
   {
+      const order_id = this.props.orderData.order_id;
       axios.defaults.headers.common = {
       "Content-Type": "application/json",
       Authorization: `Token ${this.props.token}`
       }
 
       axios
-        .get(`http://127.0.0.1:8000/paytm/order_response/`)
+        .get(`http://127.0.0.1:8000/paytm/order_response/${order_id}`)
         .then(res => {
              if (res.status === 200) {
                 this.setState({responseData: res.data});
@@ -86,20 +87,37 @@ class OrderResponse extends React.Component {
   }
 
 
+  handleSuccess() {
+    this.timer = setTimeout(() => 
+    this.redirect()
+    , 5000)
+  }
+  
+  componentWillUnmount() {
+    if (!this.timer)
+      clearTimeout(this.timer);
+  }
+
+ redirect()
+ {
+  // this.props.setOrderData(null);
+  this.props.resetCart();
+  this.props.history.push('/order/status');
+ }
 
 
 
   render() {
     const { classes } = this.props;
     const data = this.state.responseData;
+    console.log(data)
     console.log(data);
     let display;
     if (!data)
       display = <LoadingSpinner />
     else if (data['STATUS'] === "TXN_SUCCESS")
     {
-      this.props.setOrderData(null);
-      this.props.resetCart();
+      this.handleSuccess();
 
        display = (<>
               <Icon className = {classes.icon} color="primary">mood</Icon>
@@ -107,7 +125,7 @@ class OrderResponse extends React.Component {
                       Transaction Successful
                   </Typography>
                   <Link to="/" >
-                    <Button variant="contained" color="primary" className={classes.button} >
+                    <Button variant="contained" color="primary" onClick={this.handleClick} className={classes.button} >
                       Go to Home
                     </Button>
                   </Link>
@@ -128,7 +146,7 @@ class OrderResponse extends React.Component {
           </Typography>
           
          <Link to={{ pathname: '/foodcourts/restaurants/payment', isRetryPayment: true }} >
-            <Button variant="contained" color="primary" className={classes.button} >
+            <Button variant="contained" color="primary" onClick={this.handleClick} className={classes.button} >
               Retry payment
             </Button>
           </Link>
@@ -155,7 +173,8 @@ OrderResponse.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    token: state.authReducer.token
+    token: state.authReducer.token,
+    orderData: state.orderPageReducer.orderData
   };
 };
 

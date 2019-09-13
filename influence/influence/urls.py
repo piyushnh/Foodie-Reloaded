@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^restaurant_merchants/', include('apps.restaurant_merchants.urls')),
     url(r'^paytm/', include('apps.paytm.urls')),
     url(r'^auth/', include('apps.socialAuth.urls')),
+    url(r'^user/', include('apps.users.urls')),
     url(r'^$', views.HomeView.as_view(), name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

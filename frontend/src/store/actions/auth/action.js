@@ -8,6 +8,12 @@ export const authStart = () => {
     }
 }
 
+export const getUser = (user) => {
+    return {
+        type: actionTypes.GET_USER,
+        user:user
+    }
+}
 
 
 export const authSuccess = token => {
@@ -37,16 +43,20 @@ export const logout = () => {
 }
 
 
-export const authLogin = (token) => {
+export const authLogin = (data) => {
     return dispatch => {
         dispatch(authStart());
-       
         axios.defaults.headers.common = {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`
-            }
-            console.log(token);
-        dispatch(authSuccess(token));
+            Authorization: `Token ${data.token}`
+            }      
+        axios.get(`http://127.0.0.1:8000/user/details/${data.user_id}`)
+        .then(res => {
+          dispatch(getUser(res.data));
+        })
+        .catch()
+        
+        dispatch(authSuccess(data.token));
     }
 }
 

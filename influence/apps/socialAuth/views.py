@@ -146,7 +146,8 @@ def exchange_token(request, backend):
                     storage.put(credentials)
                 token, _ = Token.objects.get_or_create(user=user)
                 
-                return Response(token.key, status=status.HTTP_200_OK)
+
+                return Response({'token': token.key, 'user_id': user.id}, status=status.HTTP_200_OK)
             else:
                 # user is not active; at some point they deleted their account,
                 # or were banned by a superuser. They can't just log in with their

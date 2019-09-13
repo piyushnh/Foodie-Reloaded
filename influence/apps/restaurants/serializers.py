@@ -37,6 +37,12 @@ class MenuItemSerializer(serializers.ModelSerializer):
         model = MenuItem
         fields = '__all__'
 
+class LightMenuItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MenuItem
+        fields = ['name','price']
+
 class MenuCategorySerializer(serializers.ModelSerializer):
     items = MenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
 
@@ -60,14 +66,21 @@ class UserSerializer(serializers.ModelSerializer):
 class QuantitySerializer(serializers.ModelSerializer):
   class Meta:
     model = Quantity
-    fields = '__all__'
+    fields = ['id','number']
+
+class RelatedRestaurantSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Restaurant
+    fields = ['id', 'owner']
+
 
 class OrderSerializer(serializers.ModelSerializer):
   quantities = QuantitySerializer(read_only=True,many=True,) #method to include foreign relations
-  items = MenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
+  items = LightMenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
 #   customer = UserSerializer(read_only=True,) #method to include foreign relations
-  restaurant = RestaurantSerializer(read_only=True,) #method to include foreign relations
+  restaurant = RelatedRestaurantSerializer(read_only=True,) #method to include foreign relations
 
   class Meta:
     model = Order
     fields = '__all__'
+
