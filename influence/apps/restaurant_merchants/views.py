@@ -18,7 +18,8 @@ except ImportError:
 from rest_framework.decorators import api_view, permission_classes,authentication_classes
 from rest_framework.generics import (
     ListAPIView,
-    # RetrieveAPIView,
+    RetrieveAPIView,
+    GenericAPIView,
     # CreateAPIView,
     # DestroyAPIView,
     # UpdateAPIView
@@ -32,7 +33,7 @@ from django.conf import settings
 
 #Models and serializer imports
 from apps.restaurants.models import Restaurant
-from apps.restaurants.serializers import OrderSerializer
+from apps.restaurants.serializers import (OrderSerializer, RestaurantSerializer)
 
 
 
@@ -84,3 +85,20 @@ class ProcessingOrdersList(ListAPIView):
         # items = categories.first().items
 
         return orders
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def get_restaurant(request, owner_id):
+    """
+    List all code snippets, or create a new snippet.
+    """
+    try:
+        restaurant = User.objects.get(id = owner_id).restaurants.all()
+        print(restaurant[0])
+
+        serialized_order = RestaurantSerializer(restaurant[0])
+        
+        return Response(serialized_order.data,status=status.HTTP_201_CREATED)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

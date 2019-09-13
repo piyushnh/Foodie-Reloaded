@@ -100,9 +100,9 @@ class OrderResponse extends React.Component {
 
  redirect()
  {
-  this.props.setOrderData(null);
+  // this.props.setOrderData(null);
   this.props.resetCart();
-  this.props.history.push('/');
+  this.props.history.push('/order/status');
  }
 
 

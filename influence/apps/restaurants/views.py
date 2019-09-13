@@ -155,6 +155,7 @@ def create_order(request):
             order.quantities.create(number = element['quantity'])
 
         order.amount = amount
+        print(order)
         order.save()
 
 

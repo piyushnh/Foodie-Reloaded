@@ -71,12 +71,12 @@ class QuantitySerializer(serializers.ModelSerializer):
 class RelatedRestaurantSerializer(serializers.ModelSerializer):
   class Meta:
     model = Restaurant
-    fields = ['id', 'paytm_merchant']
+    fields = ['id', 'owner']
 
 
 class OrderSerializer(serializers.ModelSerializer):
   quantities = QuantitySerializer(read_only=True,many=True,) #method to include foreign relations
-#   items = MenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
+  items = LightMenuItemSerializer(read_only=True,many=True,) #method to include foreign relations
 #   customer = UserSerializer(read_only=True,) #method to include foreign relations
   restaurant = RelatedRestaurantSerializer(read_only=True,) #method to include foreign relations
 

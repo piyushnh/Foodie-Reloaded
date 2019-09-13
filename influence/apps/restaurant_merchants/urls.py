@@ -5,7 +5,8 @@ from django.conf import settings
 from . import views
 
 from .views import (merchant_login,
-                    ProcessingOrdersList
+                    ProcessingOrdersList,
+                    get_restaurant
                     )
 
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('login/',
             merchant_login ),
     path('processing_orders/<str:restaurant_id>',
-            ProcessingOrdersList.as_view())
+            ProcessingOrdersList.as_view()),
+    path('restaurant_owned/<str:owner_id>',
+            get_restaurant)
 
 ]

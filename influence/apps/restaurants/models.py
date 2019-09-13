@@ -58,7 +58,7 @@ class FoodCourt(models.Model):
 
 class Restaurant(models.Model):
     name = models.CharField(max_length = 100)
-    paytm_merchant = models.ForeignKey(PaytmMerchantProfile, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     foodcourt = models.ForeignKey(FoodCourt, on_delete=models.CASCADE, related_name='restaurants', null=True, blank=True)
     address = models.CharField(max_length=100, null=True)
     cover_pic = models.ImageField(upload_to = 'media/restaurant_pics',blank=False )
@@ -185,7 +185,9 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE,related_name='orders',)
     amount = models.IntegerField(default=0, verbose_name='amount', )
     items = models.ManyToManyField(MenuItem, related_name='orders')#name orders means all the orders a dish has been a part of
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)    
+    is_placed = models.BooleanField(default=False)
+    is_accepted = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -194,7 +196,6 @@ class Order(models.Model):
         return str(self.order_id)
 
     def save(self, *args, **kwargs):
-        self.order_id = None
         while not self.order_id:
             newId = str(uuid.uuid4()).replace('-','')[0:10]
 
