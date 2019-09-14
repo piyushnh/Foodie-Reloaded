@@ -50,9 +50,11 @@ def initiatePayment(request):
 
             order = request.data
             
-            merchant_id = str(order['restaurant']['paytm_merchant'])
+            owner = order['restaurant']['owner']
             order_id = str(order['order_id'])
-            merchant_key = str(MerchantProfile.objects.get(merchant_id = merchant_id).key)
+            merchant = MerchantProfile.objects.get(owner = owner)
+            merchant_key = str(merchant.key)
+            merchant_id = str(merchant.merchant_id)
 
             
 
@@ -101,7 +103,8 @@ def initiatePayment(request):
             
 
             return Response(paytmParams,status=status.HTTP_200_OK)
-    except:
+    except Exception as x:
+            print(x)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

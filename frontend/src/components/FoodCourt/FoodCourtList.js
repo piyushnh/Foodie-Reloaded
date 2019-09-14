@@ -66,25 +66,7 @@ class FoodCourtList extends React.Component {
 		const foodCourts = this.state.foodCourts;
 
 		return (
-			// <Container>
-			// {
-			//   isLoading
-
-			//   ?
-
-			//   <Spin indicator={antIcon} />
-
-			//   :
-
-			//   foodCourts.map((foodCourt)=>
-			//   <>
-			//   <br />
-			//    <FoodCourtCard key={foodCourt.id} data={foodCourt} />
-			//   <br />
-			//   </>
-			//   )
-			// }
-			// </Container>
+			
 
 			<Container>
 				{isLoading ? (

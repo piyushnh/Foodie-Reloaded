@@ -20,7 +20,11 @@ const useStyles = makeStyles(theme => ({
 	},
 	content: {
 		height: "100%"
+	},
+	bottomBar: {
+		marginTop: '5px',
 	}
+	
 }));
 
 const Main = props => {
@@ -58,7 +62,7 @@ const Main = props => {
 				variant={isDesktop ? "persistent" : "temporary"}
 			/>
 			<main className={`${classes.content}`}>{children}</main>
-			<Bottombar />
+			<Bottombar className={classes.bottomBar}/>
 		</div>
 	);
 };

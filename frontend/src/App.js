@@ -15,6 +15,7 @@ import LoginDialog from './components/Authentication/LoginOptions'
 import BaseRouter from "./routes";
 import { Typography } from "antd";
 // import BottomScrollListener from "react-bottom-scroll-listener";
+import GenericError from './components/ErrorHandlers/GenericError';
 
 const styles = theme => ({
 	root: {
@@ -58,7 +59,6 @@ class App extends Component {
     
               }
 
-					<BaseRouter />
 
 					{this.props.isAuthenticated ? (
 						/* (
