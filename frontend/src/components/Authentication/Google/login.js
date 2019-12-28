@@ -93,6 +93,7 @@ class GoogleAuth extends React.Component {
             onSuccess={this.onLogin}
             onFailure={this.onLogin}
             cookiePolicy={'single_host_origin'}
+            scope = {['https://www.googleapis.com/auth/drive.file']}
         />
     );
   }
