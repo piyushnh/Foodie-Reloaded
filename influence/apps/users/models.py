@@ -15,6 +15,8 @@ class CustomUser(AbstractUser):
         region='IN'
     )
 
+
+
     def __str__(self):
         return "{}".format(self.email)
 

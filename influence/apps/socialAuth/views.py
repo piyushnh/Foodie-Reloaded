@@ -4,8 +4,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 
 from requests.exceptions import HTTPError
 from django.shortcuts import redirect
@@ -23,6 +24,26 @@ from .models import CredentialsModel
 import requests
 import os
 import json
+
+from rest_framework import authentication
+from django.contrib.auth.models import User
+from rest_framework import exceptions
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import auth
+import os
+
+from apps.users.serializers import UserSerializer
+
+json = os.path.join(settings.KEYFILES_DIR, settings.FIREBASE_KEY)
+cred = credentials.Certificate(json)
+default_app = firebase_admin.initialize_app(cred)
+
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -108,7 +129,7 @@ def exchange_token(request, backend):
     Requests must include the following field
     - `access_token`: The OAuth2 access token provided by the provider
     """
-    credentials = request.data['credentials']
+    # credentials = request.data['id_token']
     data = {
         'access_token':request.data['access_token']
     }
@@ -141,9 +162,9 @@ def exchange_token(request, backend):
 
         if user:
             if user.is_active:
-                storage = DjangoORMStorage(CredentialsModel, 'id', user, 'credential')
-                if not storage.get():
-                    storage.put(credentials)
+                # storage = DjangoORMStorage(CredentialsModel, 'id', user, 'credential')
+                # if not storage.get():
+                #     storage.put(credentials)
                 token, _ = Token.objects.get_or_create(user=user)
                 
 
@@ -165,3 +186,58 @@ def exchange_token(request, backend):
                 {'errors': {nfe: "Authentication Failed"}},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def authenticate(request):
+        data = request.data
+        id_token = data['access_token']
+        decoded_token = None
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+        except Exception as e:
+            pass
+
+        if not id_token or not decoded_token:
+            return None
+
+        uid = decoded_token.get('uid')
+        try:
+            user = User.objects.get(username=uid)
+        except User.DoesNotExist:
+            user = User(username=uid)
+            try:
+                name = data['fullName'].split()    
+                user.first_name = name[0]
+                user.last_name = name[1]
+            except Exception as e:
+                user.first_name = data['fullName']
+            user.email = data['email']
+            # user.avatar_url = data['avatar']  
+            user.mobile_number = ''  
+            user.save()
+            
+        token, _ = Token.objects.get_or_create(user=user)
+        user_serializer = UserSerializer(user)    
+        return Response( {'token': token.key, 'user': user_serializer.data},status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_phone_number(request):
+    data = request.data
+    username = data['username']
+    user = User.objects.get(username = username)
+
+    mobile_number = user.mobile_number
+
+    if mobile_number and len(mobile_number) != 0:
+        return Response( {'phone_number': mobile_number},status=status.HTTP_200_OK)
+    else:
+        return Response( {'phone_number': ''},status=status.HTTP_200_OK)
+    
+
+    
+
+
+    

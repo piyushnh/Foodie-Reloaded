@@ -5,7 +5,8 @@ from django.conf import settings
 from . import views
 
 from .views import (exchange_token,
-                    exchange_auth_code
+                    exchange_auth_code,
+                    authenticate
                     )
 
 urlpatterns = [
@@ -15,4 +16,7 @@ urlpatterns = [
     url(r'^social/exchange_auth/$',
             view = exchange_auth_code,
              name="exchange_auth_code" ),
+    url(r'^social/authenticate/$',
+            view = authenticate,
+             name="authenticate" ),
 ]

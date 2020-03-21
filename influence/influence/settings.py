@@ -67,14 +67,16 @@ INSTALLED_APPS = [
     'apps.paytm',
     'apps.socialAuth',
     'apps.user_profile',
-    'apps.restaurant_merchants'
+    'apps.restaurant_merchants',
+
 
 ] + SOCIAL_AUTH_INSTALLED_APPS
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
-
+KEYFILES_DIR = os.path.join(BASE_DIR, 'firebase_keyfiles')
+FIREBASE_KEY = 'journal-dev-253621-firebase-adminsdk-vi6is-a4fc0fac6b.json'
 
 
 MIDDLEWARE = [

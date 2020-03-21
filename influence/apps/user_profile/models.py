@@ -15,6 +15,7 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'profile')
     birth_date = models.DateField(null=True, blank=True)
+    avatar_url = models.URLField(null = True)
 
 # @receiver(post_save, sender=User)
 # def create_user_profile(sender, instance, created, **kwargs):
