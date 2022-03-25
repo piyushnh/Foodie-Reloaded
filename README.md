@@ -1,3 +1,1 @@
-# Foodie-Reloaded
-
-In library OAuthclient, a section has a 'ImportError: cannot import name 'urlresolvers'', which is deprecated for Django 2+. It's fixed with a hack, so take note when setting up the dev environment in another machine 
+A social restaurant ordering app. The first version focuses on letting people order food in food-courts and their friends to be able to see what they've ordered and their corresponding reviews. Hence, ensuring that they make the best dish choices :)
